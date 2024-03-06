@@ -7,6 +7,14 @@ const { withAxiom } = await import('next-axiom');
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+	images: {
+		remotePatterns: [
+			{
+				hostname: 'aceternity.com',
+			},
+		],
+	},
+};
 
 export default withAxiom(config);
