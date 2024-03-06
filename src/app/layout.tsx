@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { SessionProvider } from "~/providers/session";
 import { ThemeProvider } from "~/providers/theme";
+import { Footer } from "~/components/footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,12 @@ export default function RootLayout({
       <body className={`font-sans ${inter.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SessionProvider>
-            <TRPCReactProvider>{children}</TRPCReactProvider>
+            <TRPCReactProvider>
+              <div className="flex flex-col">
+                {children}
+                <Footer />
+              </div>
+            </TRPCReactProvider>
           </SessionProvider>
         </ThemeProvider>
       </body>
