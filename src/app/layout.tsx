@@ -9,7 +9,7 @@ import { Footer } from "~/components/footer";
 import { AxiomWebVitals } from "next-axiom";
 
 const inter = Inter({
-  subsets: ["latin"],
+	subsets: ["latin"],
   variable: "--font-sans",
 });
 
@@ -27,8 +27,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AxiomWebVitals />
-      <body className={`font-sans ${inter.variable}`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <body className={`font-sans ${inter.variable}`}>
           <SessionProvider>
             <TRPCReactProvider>
               <div className="flex flex-col">
@@ -37,8 +37,8 @@ export default function RootLayout({
               </div>
             </TRPCReactProvider>
           </SessionProvider>
-        </ThemeProvider>
-      </body>
+        </body>
+      </ThemeProvider>
     </html>
   );
 }

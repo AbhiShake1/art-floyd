@@ -12,7 +12,10 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { getServerAuthSession } from "~/server/auth";
-import { db } from "~/server/db";
+import { getXataClient } from "~/xata";
+
+
+const db = getXataClient().db
 
 /**
  * 1. CONTEXT

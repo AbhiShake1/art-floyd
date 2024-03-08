@@ -8,13 +8,16 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
-	images: {
-		remotePatterns: [
+        images: {
+                remotePatterns: [
+                        {
+                                hostname: 'aceternity.com',
+                        },
 			{
-				hostname: 'aceternity.com',
+				hostname: 'us-east-1.storage.xata.sh',
 			},
-		],
-	},
+                ],
+        },
 };
 
 export default withAxiom(config);

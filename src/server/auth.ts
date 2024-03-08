@@ -1,16 +1,13 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import { type Adapter } from "next-auth/adapters";
+import { XataAdapter } from "@auth/xata-adapter"
 import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
 
 import { env } from "~/env";
-import { db } from "~/server/db";
-import { createTable } from "~/server/db/schema";
+import { XataClient } from "~/xata";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -32,6 +29,8 @@ declare module "next-auth" {
   //   // role: UserRole;
   // }
 }
+
+const client = new XataClient()
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -61,7 +60,7 @@ export const authOptions: NextAuthOptions = {
   // session: {
   //   strategy: 'jwt',
   // },
-  adapter: DrizzleAdapter(db, createTable) as Adapter,
+  adapter: XataAdapter(client),
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
