@@ -2,15 +2,16 @@ import { z } from "zod";
 
 import {
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 
 export const artworkRouter = createTRPCRouter({
   all: publicProcedure.input(z.object({ limit: z.number().nullish() }).default({}))
     .query(({ ctx, input: { limit } }) => {
+      if (!limit) return ctx.db.artwork.getAll()
+
       return ctx.db.artwork
-        .select(["name", "price", "style", "size", "image.url"])
+        .select(["name", "price", "style", "size", "artist.*", "image.url"])
         .getMany({
           pagination: {
             size: limit ?? undefined,
@@ -19,14 +20,16 @@ export const artworkRouter = createTRPCRouter({
     }),
   search: publicProcedure
     .input(z.string().nullish())
-    .mutation(async ({ ctx, input }) => {
-      if (!input) return;
+    .query(async ({ ctx, input }) => {
+      if (!input) {
+        return ctx.db.artwork.getAll();
+      }
       return ctx.db.artwork.search(input, {
         target: [
-          "size", "price", "style", "artist.name",
+          "size", "price", "style",
         ],
         fuzziness: 2,
-      })
+      }).then(c => c.records)
     }),
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))

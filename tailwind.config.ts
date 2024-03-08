@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+// @ts-expect-error exists
 import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

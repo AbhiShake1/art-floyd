@@ -1,5 +1,4 @@
 import { unstable_noStore as noStore } from "next/cache";
-import Link from "next/link";
 import { HeroParallax } from "~/components/ui/hero-parallax";
 
 import { getServerAuthSession } from "~/server/auth";
@@ -14,7 +13,7 @@ export default async function Home() {
 
   return (
     <main>
-      <HeroParallax products={products.map(({ name: title, image, id }) => ({ title, thumbnail: image?.url ?? '', link: `artworks/${id}` }))} />
+      <HeroParallax products={products.map(({ name, image, id }) => ({ title: name ?? '', thumbnail: image?.url ?? '', link: `artworks/${id}` }))} />
     </main>
   );
 }

@@ -60,6 +60,7 @@ export const authOptions: NextAuthOptions = {
   // session: {
   //   strategy: 'jwt',
   // },
+	// @ts-expect-error is isnt needed
   adapter: XataAdapter(client),
   providers: [
     GoogleProvider({
