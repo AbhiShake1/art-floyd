@@ -21,15 +21,17 @@ export const artworkRouter = createTRPCRouter({
   search: publicProcedure
     .input(z.string().nullish())
     .query(async ({ ctx, input }) => {
+      const all = () => ctx.db.artwork.getAll();
       if (!input) {
-        return ctx.db.artwork.getAll();
+        return all();
       }
-      return ctx.db.artwork.search(input, {
+      const search = await ctx.db.artwork.search(input, {
         target: [
           "size", "price", "style",
         ],
         fuzziness: 2,
       }).then(c => c.records)
+      if (search.length == 0) return all();
     }),
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))
