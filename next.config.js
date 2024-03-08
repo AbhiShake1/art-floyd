@@ -16,6 +16,9 @@ const config = {
 			{
 				hostname: 'us-east-1.storage.xata.sh',
 			},
+			{
+				hostname: 'lh3.googleusercontent.com',
+			},
                 ],
         },
 };

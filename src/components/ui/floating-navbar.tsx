@@ -9,10 +9,22 @@ import {
 import Link from "next/link";
 import { cn } from "~/lib/utils";
 import { usePathname } from "next/navigation";
+import { type getServerAuthSession } from "~/server/auth";
+import { AnimatedTooltip } from "./animated-tooltip";
+import { IconLogin } from "@tabler/icons-react";
+
+const extra = {
+  name: "Login",
+  link: "/login",
+  icon: (
+    <IconLogin className="h-4 w-4 text-neutral-500 dark:text-white" />
+  ),
+};
 
 export const FloatingNav = ({
   navItems,
   className,
+  session,
 }: {
   navItems: {
     name: string;
@@ -20,6 +32,7 @@ export const FloatingNav = ({
     icon?: JSX.Element;
   }[];
   className?: string;
+  session?: Awaited<ReturnType<typeof getServerAuthSession>>,
 }) => {
   const { scrollYProgress } = useScroll();
 
@@ -72,6 +85,29 @@ export const FloatingNav = ({
             {currentPath === link && <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />}
           </Link>
         ))}
+        {
+          !session?.user && <Link
+            key={`link=extra`}
+            href={extra.link}
+            className={cn(
+              "relative border border-neutral-200 dark:border-white/[0.2] rounded-full px-4 py-2 dark:text-neutral-50 items-center flex space-x-1 text-neutral-600 dark:hover:text-neutral-300 hover:text-neutral-500"
+            )}
+          >
+            <span className="block sm:hidden">{extra.icon}</span>
+            <span className="hidden sm:block text-sm">{extra.name}</span>
+            {currentPath === extra.link && <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />}
+          </Link>
+        }
+        {
+          session?.user && <AnimatedTooltip items={[
+            {
+              id: 1,
+              name: session.user.name ?? '',
+              designation: "",
+              image: session.user.image ?? '',
+            },
+          ]} />
+        }
       </motion.div>
     </AnimatePresence>
   );

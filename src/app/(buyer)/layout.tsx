@@ -2,15 +2,19 @@ import "~/styles/globals.css";
 
 import { FloatingNav } from "~/components/ui/floating-navbar";
 import { IconHome, IconMessage, IconUser, IconShoppingCart, IconBrandWish, IconLogin } from "@tabler/icons-react";
+import { getServerAuthSession } from "~/server/auth";
+import { AnimatedTooltip } from "~/components/ui/animated-tooltip";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerAuthSession();
+
   return (
     <div className="relative w-full">
-      <FloatingNav navItems={navItems} />
+      <FloatingNav navItems={navItems} session={session} />
       {children}
     </div>
   );
@@ -46,13 +50,6 @@ const navItems = [
     link: "/wishlist",
     icon: (
       <IconBrandWish className="h-4 w-4 text-neutral-500 dark:text-white" />
-    ),
-  },
-  {
-    name: "Login",
-    link: "/login",
-    icon: (
-      <IconLogin className="h-4 w-4 text-neutral-500 dark:text-white" />
     ),
   },
 ];
