@@ -32,6 +32,7 @@ export const artworkRouter = createTRPCRouter({
         fuzziness: 2,
       }).then(c => c.records)
       if (search.length == 0) return all();
+      return search
     }),
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))
