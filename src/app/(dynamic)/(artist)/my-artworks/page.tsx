@@ -1,6 +1,8 @@
 import { DirectionAwareHover } from "~/components/ui/direction-aware-hover";
 import { api } from "~/trpc/server"
 
+export const dynamic = "force-dynamic"
+
 export default async function Page() {
   const artworks = await api.artwork.my.query()
 

@@ -27,7 +27,6 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { Input } from "~/components/ui/input"
@@ -41,14 +40,13 @@ import {
 } from "~/components/ui/table"
 import { type inferProcedureOutput } from "@trpc/server"
 import { type AppRouter } from "~/server/api/root"
-import SuperJSON from "superjson"
 
 type Single<T> = T extends Array<infer U> ? U : never
 
 type Order = inferProcedureOutput<AppRouter["order"]["my"]>
 
 export function OrdersTable({ orders }: { orders: string }) {
-	const _orders = SuperJSON.parse<Order[]>(orders)
+	const _orders = JSON.parse(orders) as Order[]
 	console.log(_orders)
 	const columns: ColumnDef<Order>[] = [
 		{
