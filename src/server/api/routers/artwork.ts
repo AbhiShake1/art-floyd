@@ -96,6 +96,18 @@ export const artworkRouter = createTRPCRouter({
     .mutation(async ({ ctx, input: cartItemId }) => {
       return ctx.db.cartItem.deleteOrThrow(cartItemId)
     }),
+  deleteArtworkFromCart: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input: artworkId }) => {
+      const cartItems = await ctx.db.cartItem.select(["id"]).filter({ "artwork.id": artworkId }).getAll()
+      await ctx.db.cartItem.delete(cartItems.map(c => c.id))
+    }),
+  clearCart: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const cart = await ctx.db.cart.filter({ user_id: ctx.session.user.id }).getFirstOrThrow()
+      const cartItems = await ctx.db.cartItem.select(["id"]).filter({ cart }).getAll()
+      await ctx.db.cartItem.delete(cartItems.map(c => c.id))
+    })
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))
   //   .mutation(async ({ ctx, input }) => {

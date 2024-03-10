@@ -8,6 +8,7 @@ export function CartItemProvider({ children }: React.PropsWithChildren) {
   const cart = useCart()
   const { data } = api.artwork.getCartItems.useQuery();
   useEffect(() => {
+		/// @ts-expect-error xxx
     if (data) cart.setItems(data)
   }, [data])
 
