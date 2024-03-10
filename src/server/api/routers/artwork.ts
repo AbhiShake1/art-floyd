@@ -38,6 +38,12 @@ export const artworkRouter = createTRPCRouter({
           },
         });
     }),
+  my: protectedProcedure
+    .query(({ ctx }) => {
+      return ctx.db.artwork
+        .select(["name", "price", "style", "size", "artist.*", "image.url"])
+        .filter({ "artist.id": ctx.session.user.id }).getAll();
+    }),
   search: publicProcedure
     .input(z.string().nullish())
     .query(async ({ ctx, input }) => {
