@@ -6,5 +6,6 @@ export const dynamic = "force-dynamic"
 export default async function Page() {
   const orders = await api.order.my.query()
 
-  return <OrdersTable orders={JSON.stringify(orders)} />
+  // @ts-expect-error xxx
+  return <OrdersTable orders={orders} />
 }

@@ -45,8 +45,8 @@ type Single<T> = T extends Array<infer U> ? U : never
 
 type Order = inferProcedureOutput<AppRouter["order"]["my"]>
 
-export function OrdersTable({ orders }: { orders: string }) {
-	const _orders = JSON.parse(orders) as Order[]
+export function OrdersTable({ orders }: { orders: Order[] }) {
+	const _orders = orders
 	console.log(_orders)
 	const columns: ColumnDef<Order>[] = [
 		{
