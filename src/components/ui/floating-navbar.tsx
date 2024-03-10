@@ -19,7 +19,7 @@ import { groupBy } from "lodash";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
-import { IconUser, IconDashboard, IconPaint } from "@tabler/icons-react";
+import { IconUser, IconDashboard, IconPaint, IconBrandDeliveroo } from "@tabler/icons-react";
 
 const extra = {
   name: "Login",
@@ -120,7 +120,7 @@ export const FloatingNav = ({
                 },
               ]} />
             </DropdownMenuTrigger>
-            <DropdownMenuContent hidden={session.user.role !== "artist"} align="end" className="mt-3 z-50">
+            <DropdownMenuContent hidden={session.user.role !== "artist"} align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
               <DropdownMenuItem>
                 <Link className="flex" href="/profile">
                   <IconUser className="w-5 h-5 mr-2" /> Profile
@@ -136,6 +136,12 @@ export const FloatingNav = ({
               <DropdownMenuItem>
                 <Link className="flex" href="/my-artworks">
                   <IconPaint className="w-5 h-5 mr-2" /> My Artworks
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link className="flex" href="/orders">
+                  <IconBrandDeliveroo className="w-5 h-5 mr-2" /> Orders
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>

@@ -28,6 +28,7 @@ const tables = [
       { column: "user", table: "userSocialMedia" },
       { column: "sender", table: "chatMessage" },
       { column: "member", table: "chatMember" },
+      { column: "user", table: "order" },
     ],
   },
   {
@@ -159,6 +160,7 @@ const tables = [
         notNull: true,
         defaultValue: "pending",
       },
+      { name: "user", type: "link", link: { table: "nextauth_users" } },
     ],
     revLinks: [{ column: "order", table: "orderArtwork" }],
   },
