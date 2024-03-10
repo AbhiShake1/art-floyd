@@ -1,22 +1,21 @@
 import "~/styles/globals.css";
 
 import { FloatingNav } from "~/components/ui/floating-navbar";
-import { IconHome, IconMessage, IconUser, IconShoppingCart, IconBrandWish, IconLogin } from "@tabler/icons-react";
-import { getServerAuthSession } from "~/server/auth";
-import { AnimatedTooltip } from "~/components/ui/animated-tooltip";
+import { IconHome, IconMessage, IconUser, IconBrandWish } from "@tabler/icons-react";
+import { CartItemProvider } from "./_providers/cart-item-provider";
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerAuthSession();
-
   return (
-    <div className="relative w-full">
-      <FloatingNav navItems={navItems} session={session} />
-      {children}
-    </div>
+    <CartItemProvider>
+      <div className="relative w-full">
+        <FloatingNav navItems={navItems} />
+        {children}
+      </div>
+    </CartItemProvider>
   );
 }
 
@@ -36,13 +35,6 @@ const navItems = [
     link: "/feed",
     icon: (
       <IconMessage className="h-4 w-4 text-neutral-500 dark:text-white" />
-    ),
-  },
-  {
-    name: "Cart",
-    link: "/cart",
-    icon: (
-      <IconShoppingCart className="h-4 w-4 text-neutral-500 dark:text-white" />
     ),
   },
   {

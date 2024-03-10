@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   motion,
   AnimatePresence,
@@ -9,9 +9,17 @@ import {
 import Link from "next/link";
 import { cn } from "~/lib/utils";
 import { usePathname } from "next/navigation";
-import { type getServerAuthSession } from "~/server/auth";
 import { AnimatedTooltip } from "./animated-tooltip";
-import { IconLogin } from "@tabler/icons-react";
+import { IconLogin, IconShoppingCart } from "@tabler/icons-react";
+import { Button } from "./button";
+import { Sheet, SheetContent, SheetFooter, SheetTrigger } from "./sheet";
+import { Badge } from "./badge";
+import { useCart } from "~/stores/cart";
+import { groupBy } from "lodash";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
+import { IconUser, IconDashboard, IconPaint } from "@tabler/icons-react";
 
 const extra = {
   name: "Login",
@@ -24,7 +32,6 @@ const extra = {
 export const FloatingNav = ({
   navItems,
   className,
-  session,
 }: {
   navItems: {
     name: string;
@@ -32,8 +39,9 @@ export const FloatingNav = ({
     icon?: JSX.Element;
   }[];
   className?: string;
-  session?: Awaited<ReturnType<typeof getServerAuthSession>>,
 }) => {
+  const session = useSession().data
+
   const { scrollYProgress } = useScroll();
 
   const [visible, setVisible] = useState(true);
@@ -85,6 +93,7 @@ export const FloatingNav = ({
             {currentPath === link && <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />}
           </Link>
         ))}
+        <CartSheet />
         {
           !session?.user && <Link
             key={`link=extra`}
@@ -99,16 +108,101 @@ export const FloatingNav = ({
           </Link>
         }
         {
-          session?.user && <AnimatedTooltip items={[
-            {
-              id: 1,
-              name: session.user.name ?? '',
-              designation: "",
-              image: session.user.image ?? '',
-            },
-          ]} />
+          session?.user &&
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <AnimatedTooltip items={[
+                {
+                  id: 1,
+                  name: session.user.name ?? '',
+                  designation: "",
+                  image: session.user.image ?? '',
+                },
+              ]} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent hidden={session.user.role !== "artist"} align="end" className={"mt-3 z-50"}>
+              <DropdownMenuItem>
+                <Link className="flex" href="/profile">
+                  <IconUser className="w-5 h-5 mr-2" /> Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link className="flex" href="/dashboard">
+                  <IconDashboard className="w-5 h-5 mr-2" /> Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link className="flex" href="/my-artworks">
+                  <IconPaint className="w-5 h-5 mr-2" /> My Artworks
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         }
       </motion.div>
     </AnimatePresence>
   );
 };
+
+function CartSheet() {
+  const cart = useCart()
+
+  const items = useMemo(() => groupBy(cart.items, "artwork.id"), [cart.items]);
+
+  return <Sheet>
+    <SheetTrigger>
+      <CartButton />
+    </SheetTrigger>
+    <SheetContent className="bg-black">
+      <div className="flex flex-col space-y-4 p-4">
+        {
+          Object.entries(items).map(([id, items]) => {
+            const { artwork } = items[0]!
+            return <div className="flex items-center space-x-4" key={id}>
+              <div className="relative h-16 w-16 overflow-hidden rounded">
+                <Image
+                  src={artwork?.image?.url ?? ''}
+                  alt={artwork?.name ?? ''}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  fill
+                  className="absolute object-cover"
+                  loading="lazy"
+                />
+              </div>
+              <div className="flex flex-1 flex-col gap-1 self-start text-sm">
+                <span className="line-clamp-1">{artwork?.name}</span>
+                <span className="line-clamp-1 text-muted-foreground">
+                  ${artwork?.price ?? 0} x {items.length} ={" "}
+                  {(artwork?.price ?? 0) * items.length}
+                </span>
+                <span className="line-clamp-1 text-xs capitalize text-muted-foreground">
+                  {artwork?.category}
+                </span>
+              </div>
+            </div>
+          })
+        }
+      </div>
+      <SheetFooter>
+        <Button>Pay ${cart.total}</Button>
+      </SheetFooter>
+    </SheetContent>
+  </Sheet>
+}
+
+function CartButton() {
+  const { count } = useCart()
+  return <Button variant="ghost" className="relative">
+    {count > 0 && (
+      <Badge
+        variant="secondary"
+        className="absolute -right-2 -top-2 g-6 w-6 h-6 rounded-full p-2"
+      >
+        {count}
+      </Badge>
+    )}
+    <IconShoppingCart />
+  </Button>
+}

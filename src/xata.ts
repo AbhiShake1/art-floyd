@@ -14,6 +14,8 @@ const tables = [
       { name: "email", type: "email", unique: true },
       { name: "image", type: "string" },
       { name: "emailVerified", type: "datetime" },
+      { name: "contactInfo", type: "multiple" },
+      { name: "role", type: "string", notNull: true, defaultValue: "buyer" },
     ],
     revLinks: [
       { column: "user", table: "nextauth_accounts" },
@@ -21,6 +23,10 @@ const tables = [
       { column: "artist", table: "artwork" },
       { column: "user", table: "nextauth_users_accounts" },
       { column: "user", table: "nextauth_users_sessions" },
+      { column: "user", table: "wishlist" },
+      { column: "user", table: "userSocialMedia" },
+      { column: "sender", table: "chatMessage" },
+      { column: "member", table: "chatMember" },
     ],
   },
   {
@@ -63,6 +69,28 @@ const tables = [
       { name: "style", type: "string" },
       { name: "size", type: "string" },
       { name: "image", type: "file", file: { defaultPublicAccess: true } },
+      {
+        name: "secondaryAttachments",
+        type: "file[]",
+        "file[]": { defaultPublicAccess: true },
+      },
+      {
+        name: "category",
+        type: "string",
+        notNull: true,
+        defaultValue: "general",
+      },
+      {
+        name: "availableQuantity",
+        type: "int",
+        notNull: true,
+        defaultValue: "0",
+      },
+    ],
+    revLinks: [
+      { column: "artwork", table: "wishlist" },
+      { column: "artwork", table: "cartItem" },
+      { column: "artwork", table: "orderArtwork" },
     ],
   },
   {
@@ -85,6 +113,86 @@ const tables = [
     columns: [
       { name: "user", type: "link", link: { table: "nextauth_users" } },
       { name: "session", type: "link", link: { table: "nextauth_sessions" } },
+    ],
+  },
+  {
+    name: "wishlist",
+    columns: [
+      { name: "user", type: "link", link: { table: "nextauth_users" } },
+      { name: "artwork", type: "link", link: { table: "artwork" } },
+    ],
+  },
+  {
+    name: "cart",
+    columns: [{ name: "user_id", type: "string", unique: true }],
+    revLinks: [{ column: "cart", table: "cartItem" }],
+  },
+  {
+    name: "cartItem",
+    columns: [
+      { name: "cart", type: "link", link: { table: "cart" } },
+      { name: "artwork", type: "link", link: { table: "artwork" } },
+    ],
+  },
+  {
+    name: "socialMedia",
+    columns: [
+      { name: "name", type: "string", unique: true },
+      { name: "icon", type: "file", file: { defaultPublicAccess: true } },
+    ],
+    revLinks: [{ column: "socialMedia", table: "userSocialMedia" }],
+  },
+  {
+    name: "userSocialMedia",
+    columns: [
+      { name: "user", type: "link", link: { table: "nextauth_users" } },
+      { name: "socialMedia", type: "link", link: { table: "socialMedia" } },
+    ],
+  },
+  {
+    name: "order",
+    columns: [
+      {
+        name: "status",
+        type: "string",
+        notNull: true,
+        defaultValue: "pending",
+      },
+    ],
+    revLinks: [{ column: "order", table: "orderArtwork" }],
+  },
+  {
+    name: "orderArtwork",
+    columns: [
+      { name: "artwork", type: "link", link: { table: "artwork" } },
+      { name: "order", type: "link", link: { table: "order" } },
+    ],
+  },
+  {
+    name: "chat",
+    columns: [
+      { name: "title", type: "string" },
+      { name: "type", type: "string", defaultValue: "group" },
+    ],
+    revLinks: [{ column: "chat", table: "chatMember" }],
+  },
+  {
+    name: "chatMessage",
+    columns: [
+      { name: "sender", type: "link", link: { table: "nextauth_users" } },
+      { name: "message", type: "string" },
+      {
+        name: "attachments",
+        type: "file[]",
+        "file[]": { defaultPublicAccess: true },
+      },
+    ],
+  },
+  {
+    name: "chatMember",
+    columns: [
+      { name: "chat", type: "link", link: { table: "chat" } },
+      { name: "member", type: "link", link: { table: "nextauth_users" } },
     ],
   },
 ] as const;
@@ -115,6 +223,36 @@ export type NextauthUsersAccountsRecord = NextauthUsersAccounts & XataRecord;
 export type NextauthUsersSessions = InferredTypes["nextauth_users_sessions"];
 export type NextauthUsersSessionsRecord = NextauthUsersSessions & XataRecord;
 
+export type Wishlist = InferredTypes["wishlist"];
+export type WishlistRecord = Wishlist & XataRecord;
+
+export type Cart = InferredTypes["cart"];
+export type CartRecord = Cart & XataRecord;
+
+export type CartItem = InferredTypes["cartItem"];
+export type CartItemRecord = CartItem & XataRecord;
+
+export type SocialMedia = InferredTypes["socialMedia"];
+export type SocialMediaRecord = SocialMedia & XataRecord;
+
+export type UserSocialMedia = InferredTypes["userSocialMedia"];
+export type UserSocialMediaRecord = UserSocialMedia & XataRecord;
+
+export type Order = InferredTypes["order"];
+export type OrderRecord = Order & XataRecord;
+
+export type OrderArtwork = InferredTypes["orderArtwork"];
+export type OrderArtworkRecord = OrderArtwork & XataRecord;
+
+export type Chat = InferredTypes["chat"];
+export type ChatRecord = Chat & XataRecord;
+
+export type ChatMessage = InferredTypes["chatMessage"];
+export type ChatMessageRecord = ChatMessage & XataRecord;
+
+export type ChatMember = InferredTypes["chatMember"];
+export type ChatMemberRecord = ChatMember & XataRecord;
+
 export type DatabaseSchema = {
   nextauth_users: NextauthUsersRecord;
   nextauth_accounts: NextauthAccountsRecord;
@@ -123,6 +261,16 @@ export type DatabaseSchema = {
   nextauth_verificationTokens: NextauthVerificationTokensRecord;
   nextauth_users_accounts: NextauthUsersAccountsRecord;
   nextauth_users_sessions: NextauthUsersSessionsRecord;
+  wishlist: WishlistRecord;
+  cart: CartRecord;
+  cartItem: CartItemRecord;
+  socialMedia: SocialMediaRecord;
+  userSocialMedia: UserSocialMediaRecord;
+  order: OrderRecord;
+  orderArtwork: OrderArtworkRecord;
+  chat: ChatRecord;
+  chatMessage: ChatMessageRecord;
+  chatMember: ChatMemberRecord;
 };
 
 const DatabaseClient = buildClient();

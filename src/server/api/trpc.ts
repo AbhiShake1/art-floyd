@@ -15,7 +15,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { getXataClient } from "~/xata";
 
 
-const db = getXataClient().db
+const xata = getXataClient()
 
 /**
  * 1. CONTEXT
@@ -33,7 +33,8 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await getServerAuthSession();
 
   return {
-    db,
+    db: xata.db,
+		search: xata.search,
     session,
     ...opts,
   };

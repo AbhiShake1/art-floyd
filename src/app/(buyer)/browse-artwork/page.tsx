@@ -1,6 +1,8 @@
 import { DirectionAwareHover } from "~/components/ui/direction-aware-hover";
 import { api } from "~/trpc/server"
 import { ArtworkSearchBar } from "./_components/artwork-search-bar";
+import { AddToWishlistButton } from "./_components/add-to-wishlist-button";
+import { AddToCartButton } from "./_components/add-to-cart-button";
 
 export default async function Page({ searchParams }: { searchParams: { q?: string } }) {
   const artworks = await api.artwork.search.query(searchParams.q)
@@ -17,10 +19,15 @@ export default async function Page({ searchParams }: { searchParams: { q?: strin
       </div>
     </div>
     <div className="grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl mx-auto justify-items-center">{
-      artworks?.map(({ name, id, image, style, size, price }) => {
+      artworks?.map((artwork) => {
+        const { name, id, image, style, size, price, isInWishlist } = artwork
         return <DirectionAwareHover key={id} imageUrl={image?.url ?? ''}>
           <p className="font-bold text-xl">{name}</p>
           <p className="font-normal text-sm">{size} | {style} | {price}$</p>
+          <div className="flex flex-row skew-x-2 pt-4 justify-between">
+            <AddToWishlistButton {...{ isInWishlist, id }} />
+            <AddToCartButton artworkId={artwork.id} />
+          </div>
         </DirectionAwareHover>
       })
     }</div>

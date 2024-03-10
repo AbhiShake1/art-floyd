@@ -9,6 +9,8 @@ import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env";
 import { XataClient } from "~/xata";
 
+type UserRole = 'buyer' | 'artist'
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -20,14 +22,13 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      role: 'buyer' | 'artist';
+      role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    role: UserRole
+  }
 }
 
 const client = new XataClient()
@@ -40,27 +41,27 @@ const client = new XataClient()
 export const authOptions: NextAuthOptions = {
   pages: {
     signOut: '/',
-		signIn: '/login',
+    signIn: '/login',
   },
-  // callbacks: {
-  //   session: ({ session, user }) => ({
-  //     ...session,
-  //     user: {
-  //       ...session.user,
-  //       id: user.id,
-  //     },
-  //   }),
-  //   jwt({ token, user }) {
-  //     return {
-  //       ...token,
-  //       id: user.id,
-  //     };
-  //   },
-  // },
-  // session: {
-  //   strategy: 'jwt',
-  // },
-	// @ts-expect-error is isnt needed
+  callbacks: {
+    async jwt({ token }) {
+      if (token.email) {
+        if (!token.role) {
+          const userFromDb = await client.db.nextauth_users.filter({ email: token.email }).getFirst()
+          if (userFromDb) token.role = userFromDb.role as UserRole
+        }
+      }
+      return token
+    },
+    session({ session, token }) {
+      session.user.role = token.role as UserRole
+      return session
+    },
+  },
+  session: {
+    strategy: 'jwt',
+  },
+  // @ts-expect-error is isnt needed
   adapter: XataAdapter(client),
   providers: [
     GoogleProvider({
@@ -80,7 +81,7 @@ export const authOptions: NextAuthOptions = {
     //       where: ({ email, password }, { eq, and }) => and(eq(email, credentials.email), eq(password, credentials.password)),
     //     })
     //
-				// return user ?? null
+    // return user ?? null
     //   }
     // }),
     /**
