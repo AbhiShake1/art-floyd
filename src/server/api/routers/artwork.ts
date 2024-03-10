@@ -5,8 +5,24 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { type Artwork } from "~/xata";
 
 export const artworkRouter = createTRPCRouter({
+  create: protectedProcedure
+    .input(z.custom<Omit<Artwork, "artist" | "id">>())
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.artwork.create({
+        ...input,
+        artist: ctx.session.user,
+      })
+    }),
+  update: protectedProcedure
+    .input(z.custom<Partial<Omit<Artwork, "artist" | "id">> & { id: string }>())
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.artwork.update({
+        ...input,
+      })
+    }),
   all: publicProcedure
     .input(z.object({ limit: z.number().nullish() }).default({}))
     .query(({ ctx, input: { limit } }) => {
