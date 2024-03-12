@@ -4,14 +4,14 @@ import { IconShoppingCart } from "@tabler/icons-react";
 import { Button } from "~/components/ui/button";
 import { useCart } from "~/stores/cart";
 import { api } from "~/trpc/react";
+import { type CartItem } from "~/xata";
 
 type Props = { artworkId: string }
 
 export function AddToCartButton({ artworkId }: Props) {
-  const addToCart = api.artwork.addToCart.useMutation({
+  const addToCart = api.cart.add.useMutation({
     onSuccess(data) {
-      // @ts-expect-error xxx
-      cart.add(data)
+      cart.add(data as CartItem)
     },
   })
   const cart = useCart()

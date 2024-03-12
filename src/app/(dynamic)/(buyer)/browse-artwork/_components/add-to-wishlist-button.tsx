@@ -15,8 +15,8 @@ export function AddToWishlistButton({ id, isInWishlist }: AddToWishlistButtonPro
   const router = useRouter()
   const [isFav, setIsFav] = useState(isInWishlist)
 
-  const addMutation = api.artwork.addToWishlist.useMutation()
-  const removeMutation = api.artwork.removeFromWishlist.useMutation()
+  const addMutation = api.wishlist.add.useMutation()
+  const removeMutation = api.wishlist.remove.useMutation()
 
   useEffect(() => {
     if (!isFav) router.refresh()

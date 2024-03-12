@@ -6,9 +6,9 @@ import { api } from "~/trpc/react"
 
 export function CartItemProvider({ children }: React.PropsWithChildren) {
   const cart = useCart()
-  const { data } = api.artwork.getCartItems.useQuery();
+  const { data } = api.cart.get.useQuery();
   useEffect(() => {
-		/// @ts-expect-error xxx
+		// @ts-expect-error xxx
     if (data) cart.setItems(data)
   }, [data])
 

@@ -89,47 +89,6 @@ export const artworkRouter = createTRPCRouter({
       }
       return result.filter(r => r.artwork && r.user?.id === ctx.session.user.id).map(r => r.artwork!)
     }),
-  addToWishlist: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input: artworkId }) => {
-      const artwork = await ctx.db.artwork.readOrThrow(artworkId)
-      return ctx.db.wishlist.create({ artwork, user: ctx.session.user.id })
-    }),
-  removeFromWishlist: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input: artworkId }) => {
-      const wishlists = await ctx.db.wishlist.filter({ "artwork.id": artworkId, "user.id": ctx.session.user.id }).getAll()
-      return ctx.db.wishlist.delete(wishlists.map(w => w.id))
-    }),
-  getCartItems: protectedProcedure
-    .query(async ({ ctx }) => {
-      return ctx.db.cartItem.select(["artwork.*"]).filter({ cart: { user_id: ctx.session.user.id } }).getAll()
-    }),
-  addToCart: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input: artworkId }) => {
-      const cart = await ctx.db.cart.createOrUpdate({ user_id: ctx.session.user.id })
-      const artwork = await ctx.db.artwork.read(artworkId)
-      await ctx.db.cartItem.create({ cart, artwork })
-      return ctx.db.cartItem.select(["artwork.*"]).sort("xata.createdAt").getFirst()
-    }),
-  removeFromCart: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input: cartItemId }) => {
-      return ctx.db.cartItem.deleteOrThrow(cartItemId)
-    }),
-  deleteArtworkFromCart: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input: artworkId }) => {
-      const cartItems = await ctx.db.cartItem.select(["id"]).filter({ "artwork.id": artworkId }).getAll()
-      await ctx.db.cartItem.delete(cartItems.map(c => c.id))
-    }),
-  clearCart: protectedProcedure
-    .mutation(async ({ ctx }) => {
-      const cart = await ctx.db.cart.filter({ user_id: ctx.session.user.id }).getFirstOrThrow()
-      const cartItems = await ctx.db.cartItem.select(["id"]).filter({ cart }).getAll()
-      await ctx.db.cartItem.delete(cartItems.map(c => c.id))
-    })
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))
   //   .mutation(async ({ ctx, input }) => {
