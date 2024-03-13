@@ -13,14 +13,16 @@ export type AddToWishlistButtonProps = {
 
 export function AddToWishlistButton({ id, isInWishlist }: AddToWishlistButtonProps) {
   const router = useRouter()
+	const utils = api.useUtils()
   const [isFav, setIsFav] = useState(isInWishlist)
 
   const addMutation = api.wishlist.add.useMutation()
   const removeMutation = api.wishlist.remove.useMutation()
 
   useEffect(() => {
+		void utils.wishlist.search.invalidate()
     if (!isFav) router.refresh()
-  }, [isFav, router])
+  }, [isFav, router, utils.wishlist.search])
 
   return <Button variant="ghost" className="rounded-full p-2" onClick={() => {
     if (isFav) removeMutation.mutate(id, { onSuccess: () => setIsFav(false) })

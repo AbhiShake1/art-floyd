@@ -6,7 +6,7 @@ import { IconShoppingCart } from "@tabler/icons-react"
 import { Button } from "~/components/ui/button"
 
 export default async function Page({ searchParams }: { searchParams: { q?: string } }) {
-  const artworks = await api.artwork.searchWishlist.query(searchParams.q)
+  const artworks = await api.wishlist.search.query(searchParams.q)
 
   return <div className="relative w-full pt-36">
     <div className="sticky z-10 ml-auto pr-4 top-20 w-96 flex flex-row space-x-3 justify-end items-center">

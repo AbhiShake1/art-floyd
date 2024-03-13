@@ -65,30 +65,6 @@ export const artworkRouter = createTRPCRouter({
       const wishlists = !ctx.session ? [] : await ctx.db.wishlist.filter({ "user.id": ctx.session.user.id }).getAll()
       return result.map(r => ({ ...r, isInWishlist: wishlists.some(w => w?.artwork?.id === r.id), artwork: '' }))
     }),
-  searchWishlist: protectedProcedure
-    .input(z.string().nullish())
-    .query(async ({ ctx, input }) => {
-      const all = () => ctx.db.wishlist.select(["artwork.*", "user.*"]).filter({ "user.id": ctx.session.user.id }).getAll();
-      let result: Awaited<ReturnType<typeof all>>
-      if (!input) {
-        result = await all();
-      } else {
-        const artworkSearch = await ctx.db.artwork.search(input, {
-          target: [
-            "size", "price", "style", "name"
-          ],
-          fuzziness: 2,
-        })
-        const wishlist = await ctx.db.wishlist.select(["artwork.*"]).filter({
-          "user.id": ctx.session.user.id,
-        }).getAll();
-        const search = wishlist.filter(l => artworkSearch.records.map(r => r.id).includes(l.artwork?.id ?? ''))
-        if (search.length == 0) result = await all();
-        // @ts-expect-error xxx
-        else result = search
-      }
-      return result.filter(r => r.artwork && r.user?.id === ctx.session.user.id).map(r => r.artwork!)
-    }),
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))
   //   .mutation(async ({ ctx, input }) => {
