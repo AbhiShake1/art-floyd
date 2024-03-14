@@ -29,6 +29,7 @@ const tables = [
       { column: "sender", table: "chatMessage" },
       { column: "member", table: "chatMember" },
       { column: "user", table: "order" },
+      { column: "user", table: "forum" },
     ],
   },
   {
@@ -198,6 +199,20 @@ const tables = [
       { name: "member", type: "link", link: { table: "nextauth_users" } },
     ],
   },
+  {
+    name: "forum",
+    columns: [
+      { name: "user", type: "link", link: { table: "nextauth_users" } },
+      { name: "replies", type: "link", link: { table: "forum" } },
+      { name: "message", type: "string" },
+      {
+        name: "attachments",
+        type: "file[]",
+        "file[]": { defaultPublicAccess: true },
+      },
+    ],
+    revLinks: [{ column: "replies", table: "forum" }],
+  },
 ] as const;
 
 export type SchemaTables = typeof tables;
@@ -256,6 +271,9 @@ export type ChatMessageRecord = ChatMessage & XataRecord;
 export type ChatMember = InferredTypes["chatMember"];
 export type ChatMemberRecord = ChatMember & XataRecord;
 
+export type Forum = InferredTypes["forum"];
+export type ForumRecord = Forum & XataRecord;
+
 export type DatabaseSchema = {
   nextauth_users: NextauthUsersRecord;
   nextauth_accounts: NextauthAccountsRecord;
@@ -274,6 +292,7 @@ export type DatabaseSchema = {
   chat: ChatRecord;
   chatMessage: ChatMessageRecord;
   chatMember: ChatMemberRecord;
+  forum: ForumRecord;
 };
 
 const DatabaseClient = buildClient();

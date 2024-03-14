@@ -1,10 +1,13 @@
 import { IconPlus } from "@tabler/icons-react";
 import { type inferProcedureInput } from "@trpc/server";
 import { parseInt } from "lodash";
+import { revalidatePath } from "next/cache";
+import { RedirectType, redirect } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
+import { Input, type InputProps } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { cn } from "~/lib/utils";
 import { type AppRouter } from "~/server/api/root";
 import { api } from "~/trpc/server";
 
@@ -16,12 +19,36 @@ async function addArtwork(formData: FormData) {
   const name = formData.get("name") as CreateArtwork["name"]
   const size = formData.get("size") as CreateArtwork["size"]
   const style = formData.get("style") as CreateArtwork["style"]
-  const category = formData.get("") as CreateArtwork["category"]
-  const availableQuantity = parseInt((formData.get("availableQuantity") ?? "0") as string);
-  const price = parseInt((formData.get("prrice") ?? "0") as string);
+  const category = formData.get("category") as CreateArtwork["category"]
+  const availableQuantity = parseInt((formData.get("availableQuantity") ?? "0") as string)
+  const price = parseInt((formData.get("price") ?? "0") as string)
+  const image = formData.get("image") as File | undefined
+  const attachments = formData.getAll("secondaryAttachments") as File[] | undefined
 
-  await api.artwork.create.mutate({ availableQuantity, price, category, name, size, style })
-	// await api.artwork.my.revalidate()
+  const artwork = await api.artwork.create.mutate({
+    availableQuantity, price, category, name, size, style,
+    // @ts-expect-error xxx
+    image: image && {
+      name: `${image.name}${image.lastModified}`,
+      mediaType: image.type,
+      base64Content: "",
+    },
+    // @ts-expect-error xxx
+    secondaryAttachments: attachments?.map(({ type, name, lastModified }) => ({
+      name: `${name}${lastModified}`,
+      mediaType: type,
+      base64Content: "",
+    })),
+  })
+
+  await fetch(artwork.image!.uploadUrl!, { method: 'PUT', body: image });
+
+  for (const attachment of artwork.secondaryAttachments ?? []) {
+    await fetch(attachment.uploadUrl!, { method: 'PUT', body: image });
+  }
+
+  revalidatePath("/my-artworks")
+  redirect("/my-artworks")
 }
 
 export function AddArtworkButton() {
@@ -40,12 +67,14 @@ export function AddArtworkButton() {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <InputContainer name="name" placeholder="Mona Lisa" display="Name" />
-          <InputContainer name="size" placeholder="32'" display="Size" />
-          <InputContainer name="style" placeholder="cubism" display="Style" />
-          <InputContainer name="category" placeholder="abstract" display="Category" />
-          <InputContainer name="availableQuantity" placeholder="2" display="Available Quantity" />
-          <InputContainer name="price" placeholder="$1000" display="Price" />
+          <InputContainer required name="name" placeholder="Mona Lisa" display="Name" />
+          <InputContainer required name="size" placeholder="32'" display="Size" />
+          <InputContainer required name="style" placeholder="cubism" display="Style" />
+          <InputContainer required name="category" placeholder="abstract" display="Category" />
+          <InputContainer required name="availableQuantity" placeholder="2" type="number" display="Available Quantity" />
+          <InputContainer required name="price" placeholder="1000" type="number" display="Price" />
+          <InputContainer required name="image" display="Image" accept="image/png, image/jpeg" type="file" />
+          <InputContainer name="secondaryAttachments" display="Attachments" accept="image/png, image/jpeg" type="file" multiple />
         </div>
         <DialogFooter>
           <Button type="submit">Save changes</Button>
@@ -55,11 +84,13 @@ export function AddArtworkButton() {
   </Dialog>
 }
 
-function InputContainer({ name, display, placeholder }: { name: string, display: string, placeholder: string }) {
+function InputContainer({
+  name, display, placeholder, className, ...rest
+}: { name: string, display: string } & InputProps) {
   return <div className="grid grid-cols-4 items-center gap-4">
     <Label htmlFor={name} className="text-right">
       {display}
     </Label>
-    <Input id={name} name={name} placeholder={placeholder} className="col-span-3" />
+    <Input id={name} name={name} placeholder={placeholder} {...rest} className={cn("col-span-3", className)} />
   </div>
 }

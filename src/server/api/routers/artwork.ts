@@ -13,8 +13,8 @@ export const artworkRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return ctx.db.artwork.create({
         ...input,
-        artist: ctx.session.user,
-      })
+        artist: ctx.session.user.id,
+      }, ["image.uploadUrl", "secondaryAttachments.uploadUrl"])
     }),
   update: protectedProcedure
     .input(z.custom<Partial<Omit<Artwork, "artist" | "id">> & { id: string }>())
@@ -42,6 +42,7 @@ export const artworkRouter = createTRPCRouter({
     .query(({ ctx }) => {
       return ctx.db.artwork
         .select(["name", "price", "style", "size", "artist.*", "image.url"])
+        .sort("xata.updatedAt", "desc").sort("xata.createdAt", "desc")
         .filter({ "artist.id": ctx.session.user.id }).getAll();
     }),
   search: publicProcedure
