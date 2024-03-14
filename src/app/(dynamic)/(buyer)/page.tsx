@@ -11,7 +11,7 @@ export default async function Home() {
 
   return (
     <main>
-      <HeroParallax products={products.map(({ name, image, id }) => ({ title: name ?? '', thumbnail: image?.url ?? '', link: `artworks/${id}` }))} />
+      <HeroParallax products={products.map(({ name, image, id }) => ({ title: name ?? '', thumbnail: image?.url ?? '', link: `browse-artwork/${id}` }))} />
     </main>
   );
 }

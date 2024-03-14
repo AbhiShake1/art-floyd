@@ -4,7 +4,7 @@ import { AddArtworkButton } from "./_components/add-artwork-button";
 
 export const dynamic = "force-dynamic"
 
-export default async function Page() {
+export default async function Page({ searchParams }: { searchParams: { create?: boolean } }) {
   const artworks = await api.artwork.my.query()
 
   return <div className="relative w-full pt-36">
@@ -18,7 +18,7 @@ export default async function Page() {
       </div>
     </div>
     <div className="grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl mx-auto justify-items-center">
-      <AddArtworkButton />
+      <AddArtworkButton open={searchParams?.create ?? false} />
       {
         artworks?.map((artwork) => {
           const { name, id, image, style, size, price } = artwork

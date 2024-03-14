@@ -2,9 +2,10 @@ import { IconPlus } from "@tabler/icons-react";
 import { type inferProcedureInput } from "@trpc/server";
 import { parseInt } from "lodash";
 import { revalidatePath } from "next/cache";
-import { RedirectType, redirect } from "next/navigation";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { Input, type InputProps } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
@@ -51,13 +52,11 @@ async function addArtwork(formData: FormData) {
   redirect("/my-artworks")
 }
 
-export function AddArtworkButton() {
-  return <Dialog>
-    <DialogTrigger asChild>
-      <button className="w-full h-full border border-gray-50 border-opacity-25 rounded-lg flex items-center justify-center scale-75 hover:scale-100 duration-200 transition-all">
-        <IconPlus className="w-16 h-16 font-bold" />
-      </button>
-    </DialogTrigger>
+export function AddArtworkButton({ open }: { open: boolean }) {
+  return <Dialog open={open}>
+    <Link href="/my-artworks?create=true" className="w-full h-full border border-gray-50 border-opacity-25 rounded-lg flex items-center justify-center scale-75 hover:scale-100 duration-200 transition-all">
+      <IconPlus className="w-16 h-16 font-bold" />
+    </Link>
     <DialogContent className="sm:max-w-[425px]">
       <form className="w-full" action={addArtwork}>
         <DialogHeader>
