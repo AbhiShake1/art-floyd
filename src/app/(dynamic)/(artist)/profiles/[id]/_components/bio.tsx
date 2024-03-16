@@ -16,7 +16,7 @@ export function Bio({ bio, canEdit = false }: { bio: string, canEdit?: boolean }
     if (!isEditing && bio !== userBio) {
       bioMutation.mutate(userBio)
     }
-  }, [isEditing, userBio, bio]);
+  }, [isEditing, userBio, bio, bioMutation]);
 
   return <div className="px-8 py-4 text-xl text-black font-semibold flex flex-row space-x-2 justify-center items-center">
     {
