@@ -10,7 +10,7 @@ import Link from "next/link";
 import { cn } from "~/lib/utils";
 import { usePathname } from "next/navigation";
 import { AnimatedTooltip } from "./animated-tooltip";
-import { IconLogin, IconShoppingCart } from "@tabler/icons-react";
+import { IconForms, IconLogin, IconShoppingCart } from "@tabler/icons-react";
 import { Button } from "./button";
 import { Sheet, SheetContent, SheetFooter, SheetTrigger } from "./sheet";
 import { Badge } from "./badge";
@@ -136,6 +136,12 @@ export const FloatingNav = ({
               <DropdownMenuItem>
                 <Link className="flex" href="/my-artworks">
                   <IconPaint className="w-5 h-5 mr-2" /> My Artworks
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link className="flex" href="/forums">
+                  <IconForms className="w-5 h-5 mr-2" /> Forums
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

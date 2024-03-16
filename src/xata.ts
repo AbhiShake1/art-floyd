@@ -29,11 +29,11 @@ const tables = [
       { column: "sender", table: "chatMessage" },
       { column: "member", table: "chatMember" },
       { column: "user", table: "order" },
-      { column: "user", table: "forum" },
       { column: "user", table: "follower" },
       { column: "follower", table: "follower" },
       { column: "user", table: "following" },
       { column: "following", table: "following" },
+      { column: "owner", table: "chat" },
     ],
   },
   {
@@ -181,8 +181,14 @@ const tables = [
     columns: [
       { name: "title", type: "string" },
       { name: "type", type: "string", defaultValue: "group" },
+      { name: "chatMesssage", type: "link", link: { table: "chatMessage" } },
+      { name: "description", type: "text" },
+      { name: "owner", type: "link", link: { table: "nextauth_users" } },
     ],
-    revLinks: [{ column: "chat", table: "chatMember" }],
+    revLinks: [
+      { column: "chat", table: "chatMember" },
+      { column: "chat", table: "chatMessage" },
+    ],
   },
   {
     name: "chatMessage",
@@ -194,7 +200,9 @@ const tables = [
         type: "file[]",
         "file[]": { defaultPublicAccess: true },
       },
+      { name: "chat", type: "link", link: { table: "chat" } },
     ],
+    revLinks: [{ column: "chatMesssage", table: "chat" }],
   },
   {
     name: "chatMember",
@@ -202,20 +210,6 @@ const tables = [
       { name: "chat", type: "link", link: { table: "chat" } },
       { name: "member", type: "link", link: { table: "nextauth_users" } },
     ],
-  },
-  {
-    name: "forum",
-    columns: [
-      { name: "user", type: "link", link: { table: "nextauth_users" } },
-      { name: "replies", type: "link", link: { table: "forum" } },
-      { name: "message", type: "string" },
-      {
-        name: "attachments",
-        type: "file[]",
-        "file[]": { defaultPublicAccess: true },
-      },
-    ],
-    revLinks: [{ column: "replies", table: "forum" }],
   },
   {
     name: "follower",
@@ -289,9 +283,6 @@ export type ChatMessageRecord = ChatMessage & XataRecord;
 export type ChatMember = InferredTypes["chatMember"];
 export type ChatMemberRecord = ChatMember & XataRecord;
 
-export type Forum = InferredTypes["forum"];
-export type ForumRecord = Forum & XataRecord;
-
 export type Follower = InferredTypes["follower"];
 export type FollowerRecord = Follower & XataRecord;
 
@@ -316,7 +307,6 @@ export type DatabaseSchema = {
   chat: ChatRecord;
   chatMessage: ChatMessageRecord;
   chatMember: ChatMemberRecord;
-  forum: ForumRecord;
   follower: FollowerRecord;
   following: FollowingRecord;
 };
