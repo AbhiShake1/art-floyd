@@ -1,14 +1,11 @@
-"use client"
-
-import { api } from "~/trpc/react"
+import { api } from "~/trpc/server"
 import { AreaChart } from '@tremor/react';
 import { omit } from "lodash";
+import { unstable_noStore } from "next/cache";
 
-export default function Page() {
-  const { data: analytics } = api.dashboard.analytics.useQuery()
-
-  if (!analytics) return null
-
+export default async function Page() {
+  unstable_noStore()
+  const analytics = await api.dashboard.analytics.query()
   const keys = Object.keys(omit(analytics.reduce((p, c) => ({ ...p, ...c })), "date"))
 
   return <div className="flex flex-col justify-center h-screen space-y-3">

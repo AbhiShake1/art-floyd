@@ -4,8 +4,10 @@ import { Card, CardDescription, CardHeader, CardTitle } from "~/components/ui/ca
 import Link from "next/link";
 import { AnimatedTooltip } from "~/components/ui/animated-tooltip";
 import { DeleteForumButton } from "./_components/delete-forum-button";
+import { unstable_noStore } from "next/cache";
 
 export default async function Page() {
+  unstable_noStore()
   const forums = await api.forum.all.query()
 
   return <div className="flex flex-col items-start space-y-8 mx-8 mb-16 mt-36 min-h-screen">
