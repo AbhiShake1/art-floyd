@@ -30,6 +30,10 @@ const tables = [
       { column: "member", table: "chatMember" },
       { column: "user", table: "order" },
       { column: "user", table: "forum" },
+      { column: "user", table: "follower" },
+      { column: "follower", table: "follower" },
+      { column: "user", table: "following" },
+      { column: "following", table: "following" },
     ],
   },
   {
@@ -213,6 +217,20 @@ const tables = [
     ],
     revLinks: [{ column: "replies", table: "forum" }],
   },
+  {
+    name: "follower",
+    columns: [
+      { name: "user", type: "link", link: { table: "nextauth_users" } },
+      { name: "follower", type: "link", link: { table: "nextauth_users" } },
+    ],
+  },
+  {
+    name: "following",
+    columns: [
+      { name: "user", type: "link", link: { table: "nextauth_users" } },
+      { name: "following", type: "link", link: { table: "nextauth_users" } },
+    ],
+  },
 ] as const;
 
 export type SchemaTables = typeof tables;
@@ -274,6 +292,12 @@ export type ChatMemberRecord = ChatMember & XataRecord;
 export type Forum = InferredTypes["forum"];
 export type ForumRecord = Forum & XataRecord;
 
+export type Follower = InferredTypes["follower"];
+export type FollowerRecord = Follower & XataRecord;
+
+export type Following = InferredTypes["following"];
+export type FollowingRecord = Following & XataRecord;
+
 export type DatabaseSchema = {
   nextauth_users: NextauthUsersRecord;
   nextauth_accounts: NextauthAccountsRecord;
@@ -293,6 +317,8 @@ export type DatabaseSchema = {
   chatMessage: ChatMessageRecord;
   chatMember: ChatMemberRecord;
   forum: ForumRecord;
+  follower: FollowerRecord;
+  following: FollowingRecord;
 };
 
 const DatabaseClient = buildClient();

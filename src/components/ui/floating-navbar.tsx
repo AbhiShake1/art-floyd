@@ -122,7 +122,7 @@ export const FloatingNav = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent hidden={session.user.role !== "artist"} align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
               <DropdownMenuItem>
-                <Link className="flex" href="/profile">
+                <Link className="flex" href={`/profiles/${session.user.id}`}>
                   <IconUser className="w-5 h-5 mr-2" /> Profile
                 </Link>
               </DropdownMenuItem>

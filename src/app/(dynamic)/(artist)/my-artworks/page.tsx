@@ -1,10 +1,11 @@
 import { DirectionAwareHover } from "~/components/ui/direction-aware-hover";
 import { api } from "~/trpc/server"
 import { AddArtworkButton } from "./_components/add-artwork-button";
+import { EditArtworkButton } from "./_components/edit-artwork-button";
 
 export const dynamic = "force-dynamic"
 
-export default async function Page({ searchParams }: { searchParams: { create?: boolean } }) {
+export default async function Page() {
   const artworks = await api.artwork.my.query()
 
   return <div className="relative w-full pt-36">
@@ -18,13 +19,20 @@ export default async function Page({ searchParams }: { searchParams: { create?: 
       </div>
     </div>
     <div className="grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl mx-auto justify-items-center">
-      <AddArtworkButton open={searchParams?.create ?? false} />
+      <AddArtworkButton />
       {
         artworks?.map((artwork) => {
-          const { name, id, image, style, size, price } = artwork
+          const { name, id, image, style, size, price, availableQuantity, category } = artwork
           return <DirectionAwareHover key={id} imageUrl={image?.url ?? ''}>
-            <p className="font-bold text-xl">{name}</p>
-            <p className="font-normal text-sm">{size} | {style} | {price}$</p>
+            <div className="flex flex-col items-start space-y-2">
+              {
+                <EditArtworkButton artwork={{ id, name, price, style, size, category, availableQuantity }} />
+              }
+              <div className="flex flex-row space-x-4 items-end">
+                <p className="font-bold text-xl">{name}</p>
+                <p className="font-normal text-sm">{size} | {style} | {price}$</p>
+              </div>
+            </div>
           </DirectionAwareHover>
         })
       }

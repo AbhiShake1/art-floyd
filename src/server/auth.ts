@@ -28,6 +28,7 @@ declare module "next-auth" {
 
   interface User {
     role: UserRole
+    id: string
   }
 }
 
@@ -48,13 +49,17 @@ export const authOptions: NextAuthOptions = {
       if (token.email) {
         if (!token.role) {
           const userFromDb = await client.db.nextauth_users.filter({ email: token.email }).getFirst()
-          if (userFromDb) token.role = userFromDb.role as UserRole
+          if (userFromDb) {
+            token.role = userFromDb.role as UserRole
+            token.id = userFromDb.id
+          }
         }
       }
       return token
     },
     session({ session, token }) {
       session.user.role = token.role as UserRole
+      session.user.id = token.id as string
       return session
     },
   },

@@ -9,9 +9,11 @@ import {
   useMotionValue,
   useSpring,
 } from "framer-motion";
+import { cn } from "~/lib/utils";
 
 export const AnimatedTooltip = ({
   items,
+  className,
 }: {
   items: {
     id: number;
@@ -19,6 +21,7 @@ export const AnimatedTooltip = ({
     designation: string;
     image: string;
   }[];
+  className?: string
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const springConfig = { stiffness: 100, damping: 5 };
@@ -38,7 +41,7 @@ export const AnimatedTooltip = ({
     <>
       {items.map((item) => (
         <div
-          className="-mr-4  relative group"
+          className={cn("-mr-4 relative group", className)}
           key={item.name}
           onMouseEnter={() => setHoveredIndex(item.id)}
           onMouseLeave={() => setHoveredIndex(null)}
@@ -76,7 +79,7 @@ export const AnimatedTooltip = ({
           </AnimatePresence>
           <Image
             onMouseMove={(event) => {
-							/// @ts-expect-error xxx
+              /// @ts-expect-error xxx
               const halfWidth = event.target.offsetWidth / 2;
               x.set(event.nativeEvent.offsetX - halfWidth); // set the x value, which is then used in transform and rotate
             }}
