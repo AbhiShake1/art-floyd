@@ -1,14 +1,23 @@
+import { type inferProcedureOutput } from "@trpc/server";
 import { DirectionAwareHover } from "~/components/ui/direction-aware-hover";
+import { fetchFromApi } from "~/lib/service";
+import { type AppRouter } from "~/server/api/root";
 import { api } from "~/trpc/server";
 import { type NextauthUsers } from "~/xata";
+import { Bio } from "./bio";
+import { getServerAuthSession } from "~/server/auth";
 
 export async function ProfileArtworks({ user }: { user: NextauthUsers }) {
-  const artworks = await api.artwork.by.query(user.id)
+  // const artworks = await api.artwork.by.query(user.id)
+	const session = await getServerAuthSession()
+
+  const artworks = await fetchFromApi<inferProcedureOutput<AppRouter["artwork"]["by"]>>(`artwork/by/?userId=${user.id}`)
 
   if (user.role !== "artist") return null
 
   return <div className="flex flex-col justify-center items-center pt-6">
-    <h1 className="text-3xl font-bold">Recent Artworks</h1>
+    <Bio bio={user.bio ?? `I am a ${user.role}`} canEdit={user.id === session?.user.id} />
+    <h1 className="text-3xl font-bold pb-12">Recent Artworks</h1>
     <div className="grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl mx-auto justify-items-center">{
       artworks?.map((artwork) => {
         const { name, id, image, style, size, price } = artwork
