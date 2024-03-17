@@ -1,11 +1,12 @@
 "use server"
 
+import { env } from "~/env"
 import { getServerAuthSession } from "~/server/auth"
 
 export async function fetchFromApi<T>(input: string, init?: RequestInit): Promise<T> {
   const user = await getServerAuthSession()
 
-  const res = await fetch(`http://127.0.0.1:8000/${input}`, {
+  const res = await fetch(`${env.API_BASE_URL}/${input}`, {
     ...init,
     headers: {
 			...init?.headers,
