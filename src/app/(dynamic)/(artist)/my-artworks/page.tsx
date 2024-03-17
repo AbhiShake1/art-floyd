@@ -2,11 +2,16 @@ import { DirectionAwareHover } from "~/components/ui/direction-aware-hover";
 import { api } from "~/trpc/server"
 import { AddArtworkButton } from "./_components/add-artwork-button";
 import { EditArtworkButton } from "./_components/edit-artwork-button";
+import { fetchFromApi } from "~/lib/service";
+import { type AppRouter } from "~/server/api/root";
+import { type inferProcedureOutput } from "@trpc/server";
 
 export const dynamic = "force-dynamic"
 
 export default async function Page() {
-  const artworks = await api.artwork.my.query()
+  // const artworks = await api.artwork.my.query()
+
+	const artworks = await fetchFromApi<inferProcedureOutput<AppRouter["artwork"]["my"]>>("artwork/my/")
 
   return <div className="relative w-full pt-36">
     <div className="sticky z-10 ml-auto pr-4 top-20 w-96 flex flex-row space-x-3 justify-end items-center">
