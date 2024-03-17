@@ -2,9 +2,14 @@ import { notFound } from "next/navigation"
 import { AnimatedTooltip } from "~/components/ui/animated-tooltip"
 import { api } from "~/trpc/server"
 import { ProfileArtworks } from "./_components/profile-artworks"
+import { fetchFromApi } from "~/lib/service"
+import { type inferProcedureOutput } from "@trpc/server"
+import { type AppRouter } from "~/server/api/root"
 
 export default async function Page({ params: { id } }: { params: { id: string } }) {
-  const user = await api.user.withId.query(id)
+  // const user = await api.user.withId.query(id)
+
+	const user = await fetchFromApi<inferProcedureOutput<AppRouter["user"]["withId"]>>(`user/withId/?id=${id}`)
 
   if (!user) return notFound()
 

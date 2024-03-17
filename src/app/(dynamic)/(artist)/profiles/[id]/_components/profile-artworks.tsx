@@ -17,7 +17,7 @@ export async function ProfileArtworks({ user }: { user: NextauthUsers }) {
 
   return <div className="flex flex-col justify-center items-center pt-6">
     <Bio bio={user.bio ?? `I am a ${user.role}`} canEdit={user.id === session?.user.id} />
-    <h1 className="text-3xl font-bold pb-12">Recent Artworks</h1>
+    <h1 className="text-3xl font-bold py-12">Recent Artworks</h1>
     <div className="grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl mx-auto justify-items-center">{
       artworks?.map((artwork) => {
         const { name, id, image, style, size, price } = artwork
