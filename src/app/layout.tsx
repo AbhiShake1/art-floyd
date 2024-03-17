@@ -9,7 +9,7 @@ import { Footer } from "~/components/footer";
 import { AxiomWebVitals } from "next-axiom";
 
 const inter = Inter({
-	subsets: ["latin"],
+  subsets: ["latin"],
   variable: "--font-sans",
 });
 

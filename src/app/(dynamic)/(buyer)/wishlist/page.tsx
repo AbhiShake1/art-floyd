@@ -4,9 +4,14 @@ import { AddToWishlistButton } from "../browse-artwork/_components/add-to-wishli
 import { ArtworkSearchBar } from "../browse-artwork/_components/artwork-search-bar"
 import { IconShoppingCart } from "@tabler/icons-react"
 import { Button } from "~/components/ui/button"
+import { fetchFromApi } from "~/lib/service"
+import { type inferProcedureOutput } from "@trpc/server"
+import { type AppRouter } from "~/server/api/root"
 
 export default async function Page({ searchParams }: { searchParams: { q?: string } }) {
-  const artworks = await api.wishlist.search.query(searchParams.q)
+  // const artworks = await api.wishlist.search.query(searchParams.q)
+
+  const artworks = await fetchFromApi<inferProcedureOutput<AppRouter["wishlist"]["search"]>>(`wishlist/search/?q=${searchParams?.q ?? ''}`)
 
   return <div className="relative w-full pt-36">
     <div className="sticky z-10 ml-auto pr-4 top-20 w-96 flex flex-row space-x-3 justify-end items-center">

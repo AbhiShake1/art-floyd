@@ -54,7 +54,7 @@ export const artworkRouter = createTRPCRouter({
         .filter({ "artist.id": id })
         .getAll();
     }),
-  search: publicProcedure
+  search: protectedProcedure
     .input(z.string().nullish())
     .query(async ({ ctx, input }) => {
       const all = () => ctx.db.artwork.getAll();
@@ -64,7 +64,7 @@ export const artworkRouter = createTRPCRouter({
       } else {
         const search = await ctx.db.artwork.search(input, {
           target: [
-            "size", "price", "style", "name",
+            "size", "price", "style", "name"
           ],
           fuzziness: 2,
         }).then(c => c.records)
@@ -73,7 +73,7 @@ export const artworkRouter = createTRPCRouter({
         else result = search
       }
       const wishlists = !ctx.session ? [] : await ctx.db.wishlist.filter({ "user.id": ctx.session.user.id }).getAll()
-      return result.map(r => ({ ...r, isInWishlist: wishlists.some(w => w?.artwork?.id === r.id), artwork: '' }))
+      return result.map(r => ({ ...r, isInWishlist: wishlists.some(w => w?.artwork?.id === r.id) }))
     }),
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))
