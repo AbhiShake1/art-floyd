@@ -2,23 +2,23 @@
 
 import { IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
 
 export function DeleteForumReplyButton({ replyId }: { replyId: string }) {
-  const router = useRouter()
-  const utils = api.useUtils()
+  const [open, setOpen] = useState(false)
 
   const deleteMutation = api.forum.deleteReply.useMutation({
     async onSuccess() {
-      await utils.forum.byId.invalidate()
-      router.refresh()
+      console.log("done del")
+      setOpen(false)
     }
   })
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" className="absolute -top-12 -right-12 opacity-75 backdrop-blur-lg shadow-2xl border">
           <IconTrash />

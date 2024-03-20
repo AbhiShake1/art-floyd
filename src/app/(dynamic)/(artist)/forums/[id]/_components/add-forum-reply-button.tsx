@@ -4,7 +4,6 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import { IconDeviceMobileMessage } from "@tabler/icons-react";
 import { type inferProcedureInput } from "@trpc/server";
 import clsx from "clsx";
-import { useRouter } from "next/navigation";
 import { type FormEvent, useCallback, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
@@ -17,14 +16,10 @@ type Reply = inferProcedureInput<AppRouter["forum"]["reply"]>["message"]
 
 export function AddForumReplyButton({ forumId }: { forumId: string }) {
   const [open, setOpen] = useState(false)
-  const utils = api.useUtils()
-  const router = useRouter()
 
   const replyMutation = api.forum.reply.useMutation({
     async onSuccess() {
       setOpen(false)
-      await utils.forum.byId.invalidate()
-      router.refresh()
     }
   })
 

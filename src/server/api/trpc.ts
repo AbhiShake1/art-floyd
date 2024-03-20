@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 
 import { getServerAuthSession } from "~/server/auth";
 import { getXataClient } from "~/xata";
+import { pusher } from "../pusher";
 
 
 const xata = getXataClient()
@@ -34,6 +35,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
 
   return {
     db: xata.db,
+		pusher,
 		search: xata.search,
     session,
     ...opts,

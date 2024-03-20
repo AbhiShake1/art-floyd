@@ -13,12 +13,12 @@ const config = {
                         {
                                 hostname: 'aceternity.com',
                         },
-			{
-				hostname: 'us-east-1.storage.xata.sh',
-			},
-			{
-				hostname: 'lh3.googleusercontent.com',
-			},
+                        {
+                                hostname: 'us-east-1.storage.xata.sh',
+                        },
+                        {
+                                hostname: 'lh3.googleusercontent.com',
+                        },
                 ],
         },
 };

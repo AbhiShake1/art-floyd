@@ -18,7 +18,7 @@ export const orderRouter = createTRPCRouter({
 				}))
 			const result = groupBy(res, "oId")
 			const grouedOrders = Object.values(result)
-			const r = grouedOrders
+			return grouedOrders
 				.flatMap(o => o
 					.reduce(
 						(p, c) => ({
@@ -28,7 +28,5 @@ export const orderRouter = createTRPCRouter({
 						})
 					)
 				)
-			console.log(r)
-			return r
 		}),
 })
