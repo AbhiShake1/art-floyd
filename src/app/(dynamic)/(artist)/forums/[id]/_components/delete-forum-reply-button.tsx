@@ -1,7 +1,6 @@
 "use client"
 
 import { IconTrash } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
@@ -12,7 +11,6 @@ export function DeleteForumReplyButton({ replyId }: { replyId: string }) {
 
   const deleteMutation = api.forum.deleteReply.useMutation({
     async onSuccess() {
-      console.log("done del")
       setOpen(false)
     }
   })
