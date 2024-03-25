@@ -7,6 +7,7 @@ import { SessionProvider } from "~/providers/session";
 import { ThemeProvider } from "~/providers/theme";
 import { Footer } from "~/components/footer";
 import { AxiomWebVitals } from "next-axiom";
+import { Toaster } from "~/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({
             <TRPCReactProvider>
               <div className="flex flex-col">
                 {children}
+                <Toaster richColors />
                 <Footer />
               </div>
             </TRPCReactProvider>

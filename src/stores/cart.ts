@@ -4,6 +4,7 @@ import { type CartItem } from "~/xata"
 export type CartProps = {
   items: CartItem[]
   setItems: (items: CartItem[]) => void
+  clear: () => void
   add: (item: CartItem) => void
   remove: (artworkId: string) => void
   total: number
@@ -14,6 +15,7 @@ export const useCart = create<CartProps>(
   (set) => {
     return {
       items: [],
+      clear: () => set({ items: [] }),
       add: (cartItem) => {
         set(({ items }) => {
           const newItems = [...items, cartItem]

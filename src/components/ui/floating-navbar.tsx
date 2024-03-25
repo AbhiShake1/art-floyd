@@ -20,6 +20,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
 import { IconUser, IconDashboard, IconPaint, IconBrandDeliveroo } from "@tabler/icons-react";
+import { KhaltiPaymentDialog } from "../khalti-payment-dialog";
 
 const extra = {
   name: "Login",
@@ -198,7 +199,7 @@ function CartSheet() {
         }
       </div>
       <SheetFooter>
-        <Button>Pay ${cart.total}</Button>
+        <KhaltiPaymentDialog total={cart.total}/>
       </SheetFooter>
     </SheetContent>
   </Sheet>
