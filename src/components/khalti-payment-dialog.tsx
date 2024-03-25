@@ -42,6 +42,7 @@ export function KhaltiPaymentDialog({ total }: { total: number }) {
   // }, [initiateMutation])
 
   const clearCart = api.cart.clear.useMutation()
+  const createOrders = api.order.create.useMutation()
 
   return <Button onClick={() => showCheckout({
     amount: total,
@@ -49,7 +50,8 @@ export function KhaltiPaymentDialog({ total }: { total: number }) {
     onSuccess: () => {
       toast.success(`Payment of Rs.${total} completed`)
       cart.clear()
-			clearCart.mutate()
+      createOrders.mutate(cart.items.map(c => c.artwork!))
+      clearCart.mutate()
     },
   })}>Pay ${total}</Button>
   // return (
