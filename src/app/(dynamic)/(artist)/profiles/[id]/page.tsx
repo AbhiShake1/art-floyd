@@ -1,6 +1,5 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { AnimatedTooltip } from "~/components/ui/animated-tooltip"
-import { api } from "~/trpc/server"
 import { ProfileArtworks } from "./_components/profile-artworks"
 import { fetchFromApi } from "~/lib/service"
 import { type inferProcedureOutput } from "@trpc/server"
@@ -12,6 +11,8 @@ export default async function Page({ params: { id } }: { params: { id: string } 
 	const user = await fetchFromApi<inferProcedureOutput<AppRouter["user"]["withId"]>>(`user/withId/?id=${id}`)
 
   if (!user) return notFound()
+
+	if(!user.id) return redirect("/login")
 
   return <div className="flex flex-col space-y-4">
     <div className="bg-gradient-to-r from-red-300 relative to-purple-300 h-[20vh] m-8 rounded-xl">

@@ -44,7 +44,7 @@ export function EditArtworkButton({ artwork: { id, price, name, size, style, cat
     const price = parseInt((formData.get("price") ?? "0") as string)
     // const image = formData.get("image") as File | undefined
     // const attachments = formData.getAll("secondaryAttachments") as File[] | undefined
-    const artwork = await editArtwork.mutateAsync({
+    await editArtwork.mutateAsync({
       id,
       availableQuantity, price, category, name, size, style,
     })

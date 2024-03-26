@@ -8,7 +8,7 @@ import { fetchFromApi } from "~/lib/service"
 import { type inferProcedureOutput } from "@trpc/server"
 import { type AppRouter } from "~/server/api/root"
 
-export default async function Page({ searchParams }: { searchParams: { q?: string } }) {
+export default async function Page({ searchParams }: { searchParams: { q?: string, sort?: string } }) {
   // const artworks = await api.wishlist.search.query(searchParams.q)
 
   const artworks = await fetchFromApi<inferProcedureOutput<AppRouter["wishlist"]["search"]>>(`wishlist/search/?q=${searchParams?.q ?? ''}`)
@@ -21,7 +21,7 @@ export default async function Page({ searchParams }: { searchParams: { q?: strin
             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
           </svg>
         </div>
-        <ArtworkSearchBar search={searchParams.q} />
+        <ArtworkSearchBar search={searchParams.q} sort={searchParams.sort} />
       </div>
     </div>
     <div className="grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl mx-auto justify-items-center">{
