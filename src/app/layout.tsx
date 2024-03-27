@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AxiomWebVitals />
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="dark">
         <body className={`font-sans ${inter.variable}`}>
           <SessionProvider>
             <TRPCReactProvider>
