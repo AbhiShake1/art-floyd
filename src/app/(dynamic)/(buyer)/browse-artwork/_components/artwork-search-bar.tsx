@@ -6,7 +6,7 @@ import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input"
 
-export function ArtworkSearchBar({ search, sort }: { search?: string, sort?: string }) {
+export function ArtworkSearchBar({ search, sort = '' }: { search?: string, sort?: string }) {
   const router = useRouter();
   const pathname = usePathname()
 
