@@ -154,6 +154,7 @@ const tables = [
     columns: [
       { name: "user", type: "link", link: { table: "nextauth_users" } },
       { name: "socialMedia", type: "link", link: { table: "socialMedia" } },
+      { name: "link", type: "string" },
     ],
   },
   {

@@ -9,6 +9,7 @@ await import("./src/env.js");
 /** @type {import("next").NextConfig} */
 const config = {
         images: {
+                dangerouslyAllowSVG: true,
                 remotePatterns: [
                         {
                                 hostname: 'aceternity.com',
