@@ -17,6 +17,7 @@ const tables = [
       { name: "contactInfo", type: "multiple" },
       { name: "role", type: "string", notNull: true, defaultValue: "buyer" },
       { name: "bio", type: "string" },
+      { name: "events", type: "link", link: { table: "event" } },
     ],
     revLinks: [
       { column: "user", table: "nextauth_accounts" },
@@ -34,6 +35,7 @@ const tables = [
       { column: "user", table: "following" },
       { column: "following", table: "following" },
       { column: "owner", table: "chat" },
+      { column: "user", table: "eventRequest" },
     ],
   },
   {
@@ -226,6 +228,28 @@ const tables = [
       { name: "following", type: "link", link: { table: "nextauth_users" } },
     ],
   },
+  {
+    name: "event",
+    columns: [
+      { name: "dateTime", type: "datetime" },
+      { name: "location", type: "string" },
+      { name: "name", type: "string" },
+      { name: "description", type: "text" },
+    ],
+    revLinks: [
+      { column: "events", table: "nextauth_users" },
+      { column: "event", table: "eventRequest" },
+    ],
+  },
+  {
+    name: "eventRequest",
+    columns: [
+      { name: "user", type: "link", link: { table: "nextauth_users" } },
+      { name: "email", type: "email" },
+      { name: "phone", type: "string" },
+      { name: "event", type: "link", link: { table: "event" } },
+    ],
+  },
 ] as const;
 
 export type SchemaTables = typeof tables;
@@ -290,6 +314,12 @@ export type FollowerRecord = Follower & XataRecord;
 export type Following = InferredTypes["following"];
 export type FollowingRecord = Following & XataRecord;
 
+export type Event = InferredTypes["event"];
+export type EventRecord = Event & XataRecord;
+
+export type EventRequest = InferredTypes["eventRequest"];
+export type EventRequestRecord = EventRequest & XataRecord;
+
 export type DatabaseSchema = {
   nextauth_users: NextauthUsersRecord;
   nextauth_accounts: NextauthAccountsRecord;
@@ -310,6 +340,8 @@ export type DatabaseSchema = {
   chatMember: ChatMemberRecord;
   follower: FollowerRecord;
   following: FollowingRecord;
+  event: EventRecord;
+  eventRequest: EventRequestRecord;
 };
 
 const DatabaseClient = buildClient();

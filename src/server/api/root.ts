@@ -6,6 +6,7 @@ import { wishlistRouter } from "./routers/wishlist";
 import { cartRouter } from "./routers/cart";
 import { dashboardRouter } from "./routers/dashboard";
 import { forumRouter } from "./routers/forum";
+import { eventRouter } from "./routers/event";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ import { forumRouter } from "./routers/forum";
  */
 export const appRouter = createTRPCRouter({
   artwork: artworkRouter,
+	event: eventRouter,
   user: userRouter,
   order: orderRouter,
   wishlist: wishlistRouter,

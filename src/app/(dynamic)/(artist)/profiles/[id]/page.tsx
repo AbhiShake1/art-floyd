@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { AnimatedTooltip } from "~/components/ui/animated-tooltip"
 import { ProfileArtworks } from "./_components/profile-artworks"
 import { fetchFromApi } from "~/lib/service"
@@ -36,6 +36,9 @@ export default async function Page({ params: { id } }: { params: { id: string } 
     </div>
     <Bio bio={user.bio ?? `I am a ${user.role}`} canEdit={hasPerm} />
     {socialMedias && <SocialMedias canAdd={hasPerm} socialMedias={SuperJSON.stringify(socialMedias)} />}
-    <ProfileArtworks user={user} />
+    {
+      // @ts-expect-error xxx
+      <ProfileArtworks user={user} />
+    }
   </div>
 }
