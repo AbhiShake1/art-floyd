@@ -17,11 +17,14 @@ import { Label } from "~/components/ui/label"
 import { initiatePayment, showCheckout } from "~/lib/payment"
 import { useCart } from "~/stores/cart"
 import { api } from "~/trpc/react"
+import { useRouter } from "next/navigation"
 
 const randomUUID = () => `${Math.random() * 100}`
 
 export function KhaltiPaymentDialog({ total }: { total: number }) {
   const cart = useCart()
+  const router = useRouter()
+  const utils = api.useUtils()
   // const initiateMutation = useMutation({
   //   mutationFn: (formData: FormData) => {
   //     return initiatePayment({
@@ -48,10 +51,12 @@ export function KhaltiPaymentDialog({ total }: { total: number }) {
     amount: total,
     onError: (e) => toast.error(e as string),
     onSuccess: () => {
-      toast.success(`Payment of Rs.${total} completed`)
       cart.clear()
-      createOrders.mutate(cart.items.map(c => c.artwork!))
+      toast.success(`Payment of Rs.${total} completed`)
+      void utils.cart.invalidate()
       clearCart.mutate()
+      createOrders.mutate(cart.items.map(c => c.artwork!))
+      router.refresh()
     },
   })}>Pay ${total}</Button>
   // return (

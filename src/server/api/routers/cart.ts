@@ -7,9 +7,10 @@ export const cartRouter = createTRPCRouter({
       return ctx.db.cartItem.select(["artwork.*"]).filter({ cart: { user_id: ctx.user.id } }).getAll()
     }),
   add: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input: artworkId }) => {
-      const cart = await ctx.db.cart.createOrUpdate({ user_id: ctx.user.id })
+    .input(z.object({ artworkId: z.string() }))
+    .mutation(async ({ ctx, input: { artworkId } }) => {
+      const userCart = await ctx.db.cart.filter({ user_id: ctx.user.id }).getFirst()
+      const cart = await ctx.db.cart.createOrUpdate(userCart?.id, { user_id: ctx.user.id })
       const artwork = await ctx.db.artwork.read(artworkId)
       await ctx.db.cartItem.create({ cart, artwork })
       return ctx.db.cartItem.select(["artwork.*"]).sort("xata.createdAt").getFirst()
