@@ -20,7 +20,7 @@ import Image from "next/image";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
 import { IconUser, IconDashboard, IconPaint, IconBrandDeliveroo } from "@tabler/icons-react";
 import { KhaltiPaymentDialog } from "../khalti-payment-dialog";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 
 const extra = {
   name: "Login",
@@ -41,6 +41,7 @@ export const FloatingNav = ({
   }[];
   className?: string;
 }) => {
+  const { user } = useUser()
   const { scrollYProgress } = useScroll();
 
   const [visible, setVisible] = useState(true);
@@ -109,49 +110,49 @@ export const FloatingNav = ({
         <SignedIn>
           <UserButton />
           {
-            // <DropdownMenu>
-            //   <DropdownMenuTrigger>
-            //     <AnimatedTooltip items={[
-            //       {
-            //         id: 1,
-            //         name: session.user.name ?? '',
-            //         designation: "",
-            //         image: session.user.image ?? '',
-            //       },
-            //     ]} />
-            //   </DropdownMenuTrigger>
-            //   <DropdownMenuContent hidden={session.user.role !== "artist"} align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
-            //     <DropdownMenuItem>
-            //       <Link className="flex" href={`/profiles/${session.user.id}`}>
-            //         <IconUser className="w-5 h-5 mr-2" /> Profile
-            //       </Link>
-            //     </DropdownMenuItem>
-            //     <DropdownMenuSeparator />
-            //     <DropdownMenuItem>
-            //       <Link className="flex" href="/dashboard">
-            //         <IconDashboard className="w-5 h-5 mr-2" /> Dashboard
-            //       </Link>
-            //     </DropdownMenuItem>
-            //     <DropdownMenuSeparator />
-            //     <DropdownMenuItem>
-            //       <Link className="flex" href="/my-artworks">
-            //         <IconPaint className="w-5 h-5 mr-2" /> My Artworks
-            //       </Link>
-            //     </DropdownMenuItem>
-            //     <DropdownMenuSeparator />
-            //     <DropdownMenuItem>
-            //       <Link className="flex" href="/forums">
-            //         <IconForms className="w-5 h-5 mr-2" /> Forums
-            //       </Link>
-            //     </DropdownMenuItem>
-            //     <DropdownMenuSeparator />
-            //     <DropdownMenuItem>
-            //       <Link className="flex" href="/orders">
-            //         <IconBrandDeliveroo className="w-5 h-5 mr-2" /> Orders
-            //       </Link>
-            //     </DropdownMenuItem>
-            //   </DropdownMenuContent>
-            // </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <AnimatedTooltip items={[
+                  {
+                    id: 1,
+                    name: user?.firstName ?? '',
+                    designation: "",
+                    image: user?.imageUrl ?? '',
+                  },
+                ]} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent hidden={user?.publicMetadata.role !== "artist"} align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
+                <DropdownMenuItem>
+                  <Link className="flex" href={`/profiles/${user?.id}`}>
+                    <IconUser className="w-5 h-5 mr-2" /> Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link className="flex" href="/dashboard">
+                    <IconDashboard className="w-5 h-5 mr-2" /> Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link className="flex" href="/my-artworks">
+                    <IconPaint className="w-5 h-5 mr-2" /> My Artworks
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link className="flex" href="/forums">
+                    <IconForms className="w-5 h-5 mr-2" /> Forums
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link className="flex" href="/orders">
+                    <IconBrandDeliveroo className="w-5 h-5 mr-2" /> Orders
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           }
         </SignedIn>
       </motion.div>
