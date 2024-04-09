@@ -34,7 +34,7 @@ export const orderRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.custom<Artwork[]>())
     .mutation(async ({ ctx, input }) => {
-      const order = await ctx.db.order.create({ user: ctx.session.user })
+      const order = await ctx.db.order.create({ user: ctx.user.id })
       for (const artwork of input)
         await ctx.db.orderArtwork.create({ order, artwork })
     })

@@ -5,7 +5,7 @@ export const userRouter = createTRPCRouter({
   updateBio: protectedProcedure
     .input(z.string().min(5))
     .mutation(({ ctx, input: bio }) => {
-      return ctx.db.nextauth_users.update(ctx.session.user.id, { bio })
+      return ctx.db.nextauth_users.update(ctx.user.id, { bio })
     }),
   withId: publicProcedure
     .input(z.string().min(1))
@@ -22,6 +22,6 @@ export const userRouter = createTRPCRouter({
   addSocialMedia: protectedProcedure
     .input(z.object({ link: z.string().url(), socialMedia: z.string().min(1) }))
     .mutation(async ({ ctx, input: { link, socialMedia } }) => {
-      return ctx.db.userSocialMedia.create({ link, user: ctx.session.user.id, socialMedia })
+      return ctx.db.userSocialMedia.create({ link, user: ctx.user.id, socialMedia })
     }),
 })

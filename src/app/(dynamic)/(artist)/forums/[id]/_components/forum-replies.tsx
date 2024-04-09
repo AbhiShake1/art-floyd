@@ -5,15 +5,15 @@ import { type ForumDetail } from "../page";
 import { Card, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { AnimatedTooltip } from "~/components/ui/animated-tooltip";
 import { DeleteForumReplyButton } from "./delete-forum-reply-button";
-import { useSession } from "next-auth/react";
 import { pusherClient } from "~/server/pusher-client";
+import { useUser } from "@clerk/nextjs";
 
 type Single<T> = T extends Array<infer U> ? U : never
 
 type Reply = Single<ForumDetail["replies"]>
 
 export function ForumReplies({ replies: _replies, chatId }: { replies: Reply[], chatId: string }) {
-  const user = useSession().data?.user
+  const { user } = useUser()
   const [replies, setReplies] = useState(_replies)
 
   useEffect(() => {

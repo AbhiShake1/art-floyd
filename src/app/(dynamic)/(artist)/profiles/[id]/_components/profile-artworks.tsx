@@ -2,18 +2,14 @@ import { type inferProcedureOutput } from "@trpc/server";
 import { DirectionAwareHover } from "~/components/ui/direction-aware-hover";
 import { fetchFromApi } from "~/lib/service";
 import { type AppRouter } from "~/server/api/root";
-import { api } from "~/trpc/server";
-import { type NextauthUsers } from "~/xata";
-import { Bio } from "./bio";
-import { getServerAuthSession } from "~/server/auth";
 import { RedirectType, redirect } from 'next/navigation'
+import { currentUser } from "@clerk/nextjs/server";
 
-export async function ProfileArtworks({ user }: { user: NextauthUsers }) {
-  // const artworks = await api.artwork.by.query(user.id)
+export async function ProfileArtworks() {
+  const user = await currentUser()
+  const artworks = await fetchFromApi<inferProcedureOutput<AppRouter["artwork"]["by"]>>(`artwork/by/?userId=${user?.id}`)
 
-  const artworks = await fetchFromApi<inferProcedureOutput<AppRouter["artwork"]["by"]>>(`artwork/by/?userId=${user.id}`)
-
-  if (user.role !== "artist") redirect('/', RedirectType.replace)
+  if (user?.publicMetadata?.role !== "artist") redirect('/', RedirectType.replace)
 
   return <div className="flex flex-col justify-center items-center pt-6">
     <h1 className="text-3xl font-bold py-12">Recent Artworks</h1>

@@ -7,23 +7,23 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
-import { getServerAuthSession } from "~/server/auth";
 import { AddEventButton } from "./_components/add-event-button";
 import { ClockIcon } from "@radix-ui/react-icons";
 import { api } from "~/trpc/server";
 import { IconLocationPin } from "@tabler/icons-react";
 import { Label } from "~/components/ui/label";
 import { RequestInvitationButton } from "./_components/request-invitation-button";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Page() {
-  const session = await getServerAuthSession()
+  const user = await currentUser()
   const events = await api.event.all.query()
 
   return <div className="flex flex-col space-y-3">
     <div className="flex flex-row justify-between items-start">
       <h1 className="text-lg font-semibold md:text-2xl pb-4">Events</h1>
       {
-        session?.user.role === "artist" &&
+        user?.publicMetadata?.role === "artist" &&
         <AddEventButton />
       }
     </div>

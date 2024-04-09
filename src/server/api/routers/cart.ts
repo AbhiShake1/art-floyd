@@ -4,12 +4,12 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 export const cartRouter = createTRPCRouter({
   get: protectedProcedure
     .query(async ({ ctx }) => {
-      return ctx.db.cartItem.select(["artwork.*"]).filter({ cart: { user_id: ctx.session.user.id } }).getAll()
+      return ctx.db.cartItem.select(["artwork.*"]).filter({ cart: { user_id: ctx.user.id } }).getAll()
     }),
   add: protectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input: artworkId }) => {
-      const cart = await ctx.db.cart.createOrUpdate({ user_id: ctx.session.user.id })
+      const cart = await ctx.db.cart.createOrUpdate({ user_id: ctx.user.id })
       const artwork = await ctx.db.artwork.read(artworkId)
       await ctx.db.cartItem.create({ cart, artwork })
       return ctx.db.cartItem.select(["artwork.*"]).sort("xata.createdAt").getFirst()
@@ -27,7 +27,7 @@ export const cartRouter = createTRPCRouter({
     }),
   clear: protectedProcedure
     .mutation(async ({ ctx }) => {
-      const cart = await ctx.db.cart.filter({ user_id: ctx.session.user.id }).getFirstOrThrow()
+      const cart = await ctx.db.cart.filter({ user_id: ctx.user.id }).getFirstOrThrow()
       const cartItems = await ctx.db.cartItem.select(["id"]).filter({ cart }).getAll()
       await ctx.db.cartItem.delete(cartItems.map(c => c.id))
     }),

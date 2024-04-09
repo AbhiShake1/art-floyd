@@ -8,20 +8,19 @@ import { api } from "~/trpc/server"
 import { SocialMedias } from "./_components/social-medias"
 import { unstable_noStore } from "next/cache"
 import SuperJSON from "superjson"
-import { getServerAuthSession } from "~/server/auth"
 import { Bio } from "./_components/bio"
+import { currentUser } from "@clerk/nextjs/server"
 
 export default async function Page({ params: { id } }: { params: { id: string } }) {
   unstable_noStore()
-  // const user = await api.user.withId.query(id)
 
   const user = await fetchFromApi<inferProcedureOutput<AppRouter["user"]["withId"]>>(`user/withId/?id=${id}`)
 
   if (!user?.id) return notFound()
 
   const socialMedias = await api.user.socialMediasOf.query(user.id)
-  const session = await getServerAuthSession()
-  const hasPerm = user.id === session?.user.id
+  const authUser = await currentUser()
+  const hasPerm = user.id === authUser?.id
 
   return <div className="flex flex-col space-y-4">
     <div className="bg-gradient-to-r from-red-300 relative to-purple-300 h-[20vh] m-8 rounded-xl">

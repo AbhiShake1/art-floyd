@@ -17,10 +17,10 @@ import { Badge } from "./badge";
 import { useCart } from "~/stores/cart";
 import { groupBy } from "lodash";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
 import { IconUser, IconDashboard, IconPaint, IconBrandDeliveroo } from "@tabler/icons-react";
 import { KhaltiPaymentDialog } from "../khalti-payment-dialog";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const extra = {
   name: "Login",
@@ -41,8 +41,6 @@ export const FloatingNav = ({
   }[];
   className?: string;
 }) => {
-  const session = useSession().data
-
   const { scrollYProgress } = useScroll();
 
   const [visible, setVisible] = useState(true);
@@ -95,8 +93,8 @@ export const FloatingNav = ({
           </Link>
         ))}
         <CartSheet />
-        {
-          !session?.user && <Link
+        <SignedOut>
+          <Link
             key={`link=extra`}
             href={extra.link}
             className={cn(
@@ -107,53 +105,55 @@ export const FloatingNav = ({
             <span className="hidden sm:block text-sm">{extra.name}</span>
             {currentPath === extra.link && <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />}
           </Link>
-        }
-        {
-          session?.user &&
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <AnimatedTooltip items={[
-                {
-                  id: 1,
-                  name: session.user.name ?? '',
-                  designation: "",
-                  image: session.user.image ?? '',
-                },
-              ]} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent hidden={session.user.role !== "artist"} align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
-              <DropdownMenuItem>
-                <Link className="flex" href={`/profiles/${session.user.id}`}>
-                  <IconUser className="w-5 h-5 mr-2" /> Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link className="flex" href="/dashboard">
-                  <IconDashboard className="w-5 h-5 mr-2" /> Dashboard
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link className="flex" href="/my-artworks">
-                  <IconPaint className="w-5 h-5 mr-2" /> My Artworks
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link className="flex" href="/forums">
-                  <IconForms className="w-5 h-5 mr-2" /> Forums
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link className="flex" href="/orders">
-                  <IconBrandDeliveroo className="w-5 h-5 mr-2" /> Orders
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        }
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+          {
+            // <DropdownMenu>
+            //   <DropdownMenuTrigger>
+            //     <AnimatedTooltip items={[
+            //       {
+            //         id: 1,
+            //         name: session.user.name ?? '',
+            //         designation: "",
+            //         image: session.user.image ?? '',
+            //       },
+            //     ]} />
+            //   </DropdownMenuTrigger>
+            //   <DropdownMenuContent hidden={session.user.role !== "artist"} align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
+            //     <DropdownMenuItem>
+            //       <Link className="flex" href={`/profiles/${session.user.id}`}>
+            //         <IconUser className="w-5 h-5 mr-2" /> Profile
+            //       </Link>
+            //     </DropdownMenuItem>
+            //     <DropdownMenuSeparator />
+            //     <DropdownMenuItem>
+            //       <Link className="flex" href="/dashboard">
+            //         <IconDashboard className="w-5 h-5 mr-2" /> Dashboard
+            //       </Link>
+            //     </DropdownMenuItem>
+            //     <DropdownMenuSeparator />
+            //     <DropdownMenuItem>
+            //       <Link className="flex" href="/my-artworks">
+            //         <IconPaint className="w-5 h-5 mr-2" /> My Artworks
+            //       </Link>
+            //     </DropdownMenuItem>
+            //     <DropdownMenuSeparator />
+            //     <DropdownMenuItem>
+            //       <Link className="flex" href="/forums">
+            //         <IconForms className="w-5 h-5 mr-2" /> Forums
+            //       </Link>
+            //     </DropdownMenuItem>
+            //     <DropdownMenuSeparator />
+            //     <DropdownMenuItem>
+            //       <Link className="flex" href="/orders">
+            //         <IconBrandDeliveroo className="w-5 h-5 mr-2" /> Orders
+            //       </Link>
+            //     </DropdownMenuItem>
+            //   </DropdownMenuContent>
+            // </DropdownMenu>
+          }
+        </SignedIn>
       </motion.div>
     </AnimatePresence>
   );
@@ -199,7 +199,7 @@ function CartSheet() {
         }
       </div>
       <SheetFooter>
-        <KhaltiPaymentDialog total={cart.total}/>
+        <KhaltiPaymentDialog total={cart.total} />
       </SheetFooter>
     </SheetContent>
   </Sheet>

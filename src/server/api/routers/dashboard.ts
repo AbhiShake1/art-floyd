@@ -23,7 +23,7 @@ export const dashboardRouter = createTRPCRouter({
           "artist",
           "price",
         ])
-        .filter({ "artist.id": ctx.session.user.id })
+        .filter({ "artist.id": ctx.user.id })
         .getAll();
 
       const chartdata = data.map(item => ({

@@ -13,7 +13,7 @@ export const artworkRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return ctx.db.artwork.create({
         ...input,
-        artist: ctx.session.user.id,
+        artist: ctx.user.id,
       }, ["image.uploadUrl", "secondaryAttachments.uploadUrl"])
     }),
   update: protectedProcedure
@@ -43,7 +43,7 @@ export const artworkRouter = createTRPCRouter({
       return ctx.db.artwork
         .select(["name", "price", "style", "size", "artist.*", "image.url", "availableQuantity", "category"])
         .sort("xata.updatedAt", "desc").sort("xata.createdAt", "desc")
-        .filter({ "artist.id": ctx.session.user.id }).getAll();
+        .filter({ "artist.id": ctx.user.id }).getAll();
     }),
   by: publicProcedure
     .input(z.string())
@@ -72,7 +72,7 @@ export const artworkRouter = createTRPCRouter({
         // @ts-expect-error xxx
         else result = search
       }
-      const wishlists = !ctx.session ? [] : await ctx.db.wishlist.filter({ "user.id": ctx.session.user.id }).getAll()
+      const wishlists = !ctx.user ? [] : await ctx.db.wishlist.filter({ "user.id": ctx.user.id }).getAll()
       return result.map(r => ({ ...r, isInWishlist: wishlists.some(w => w?.artwork?.id === r.id) }))
     }),
   // create: protectedProcedure

@@ -8,6 +8,8 @@ import { ThemeProvider } from "~/providers/theme";
 import { Footer } from "~/components/footer";
 import { AxiomWebVitals } from "next-axiom";
 import { Toaster } from "~/components/ui/sonner";
+import { dark as baseTheme } from "@clerk/themes"
+import { ClerkProvider } from '@clerk/nextjs'
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,10 +29,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <AxiomWebVitals />
-      <ThemeProvider attribute="class" defaultTheme="dark">
-        <body className={`font-sans ${inter.variable}`}>
-          <SessionProvider>
+      <ClerkProvider appearance={{
+        // baseTheme,
+      }}>
+        <AxiomWebVitals />
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <body className={`font-sans ${inter.variable}`}>
             <TRPCReactProvider>
               <div className="flex flex-col">
                 {children}
@@ -38,9 +42,9 @@ export default function RootLayout({
                 <Footer />
               </div>
             </TRPCReactProvider>
-          </SessionProvider>
-        </body>
-      </ThemeProvider>
+          </body>
+        </ThemeProvider>
+      </ClerkProvider>
     </html>
   );
 }

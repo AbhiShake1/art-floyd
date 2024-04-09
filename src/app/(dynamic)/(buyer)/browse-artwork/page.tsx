@@ -7,8 +7,10 @@ import { type inferProcedureOutput } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
 import Link from "next/link";
 import clsx from "clsx";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Page({ searchParams: { q, sort, style } = {} }: { searchParams?: { q?: string, sort?: string, style?: string } }) {
+	const user = await currentUser()
   // const artworks = await api.artwork.search.query(searchParams.q)
 
   const searchMap = { q, sort, style };
@@ -53,7 +55,7 @@ export default async function Page({ searchParams: { q, sort, style } = {} }: { 
               <p className="font-bold text-xl">{name}</p>
               <p className="font-normal text-sm">{size} | {style} | {price}$</p>
               <div className="flex flex-row skew-x-2 pt-4 justify-between">
-                <AddToWishlistButton {...{ isInWishlist, id }} />
+                {user && <AddToWishlistButton {...{ isInWishlist, id }} />}
                 <AddToCartButton artworkId={artwork.id} artworkName={artwork.name ?? ''} />
               </div>
             </DirectionAwareHover>

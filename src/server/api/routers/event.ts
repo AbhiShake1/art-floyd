@@ -14,6 +14,6 @@ export const eventRouter = createTRPCRouter({
   request: protectedProcedure
     .input(z.object({ email: z.string().email(), phone: z.string().min(1), eventId: z.string().min(1) }))
     .mutation(({ ctx, input: { email, phone, eventId } }) => {
-      return ctx.db.eventRequest.create({ user: ctx.session.user.id, email, phone, event: eventId })
+      return ctx.db.eventRequest.create({ user: ctx.user.id, email, phone, event: eventId })
     }),
 })
