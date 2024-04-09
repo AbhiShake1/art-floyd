@@ -24,7 +24,7 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const extra = {
   name: "Login",
-  link: "/login",
+  link: "/auth/login",
   icon: (
     <IconLogin className="h-4 w-4 text-neutral-500 dark:text-white" />
   ),
