@@ -7,12 +7,18 @@ import { useCart } from "~/stores/cart";
 import { api } from "~/trpc/react";
 import { type CartItem } from "~/xata";
 import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Props = { artworkId: string, artworkName: string }
 
 export function AddToCartButton({ artworkId, artworkName }: Props) {
+  const router = useRouter()
+  const utils = api.useUtils()
+
   const addToCart = api.cart.add.useMutation({
-    onSuccess(data) {
+    async onSuccess(data) {
+      await utils.cart.invalidate()
+      router.refresh()
       toast.success(`${artworkName} added to cart`)
       cart.add(data as CartItem)
     },
