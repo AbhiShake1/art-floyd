@@ -26,7 +26,7 @@ export function RequestInvitationButton({ id }: Event) {
 		onSuccess() {
 			setOpen(false)
 			router.refresh()
-			toast.success('Requested successfully')
+			toast.success('Requested successfully', {description: "Check your email"})
 		},
 		onError(error) {
 			toast.error(JSON.stringify(error))

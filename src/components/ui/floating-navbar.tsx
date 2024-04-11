@@ -10,7 +10,7 @@ import Link from "next/link";
 import { cn } from "~/lib/utils";
 import { usePathname } from "next/navigation";
 import { AnimatedTooltip } from "./animated-tooltip";
-import { IconForms, IconLogin, IconShoppingCart } from "@tabler/icons-react";
+import { IconForms, IconLogin, IconSettings, IconShoppingCart } from "@tabler/icons-react";
 import { Button } from "./button";
 import { Sheet, SheetContent, SheetFooter, SheetTrigger } from "./sheet";
 import { Badge } from "./badge";
@@ -108,19 +108,11 @@ export const FloatingNav = ({
           </Link>
         </SignedOut>
         <SignedIn>
-          <UserButton />
           {
             user?.publicMetadata.role === "artist" &&
             <DropdownMenu>
               <DropdownMenuTrigger>
-                <AnimatedTooltip items={[
-                  {
-                    id: 1,
-                    name: user?.firstName ?? '',
-                    designation: "",
-                    image: user?.imageUrl ?? '',
-                  },
-                ]} />
+                <IconSettings />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
                 <DropdownMenuItem>
@@ -155,6 +147,7 @@ export const FloatingNav = ({
               </DropdownMenuContent>
             </DropdownMenu>
           }
+          <UserButton />
         </SignedIn>
       </motion.div>
     </AnimatePresence>

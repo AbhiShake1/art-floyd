@@ -29,6 +29,7 @@ export const env = createEnv({
     PUSHER_KEY: z.string(),
     PUSHER_SECRET: z.string(),
     PUSHER_CLUSTER: z.string(),
+    RESEND_API_KEY: z.string(),
   },
 
   /**
@@ -60,6 +61,7 @@ export const env = createEnv({
     NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
     NEXT_PUBLIC_PUSHER_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
     AUTH_WEBHOOK_SECRET: process.env.AUTH_WEBHOOK_SECRET,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
