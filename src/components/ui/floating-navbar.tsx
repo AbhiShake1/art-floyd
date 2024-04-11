@@ -110,6 +110,7 @@ export const FloatingNav = ({
         <SignedIn>
           <UserButton />
           {
+            user?.publicMetadata.role === "artist" &&
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <AnimatedTooltip items={[
@@ -121,7 +122,7 @@ export const FloatingNav = ({
                   },
                 ]} />
               </DropdownMenuTrigger>
-              <DropdownMenuContent hidden={user?.publicMetadata.role !== "artist"} align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
+              <DropdownMenuContent align="end" className="mt-3 px-2 text-white shadow-xl bg-transparent backdrop-blur-md z-50">
                 <DropdownMenuItem>
                   <Link className="flex" href={`/profiles/${user?.id}`}>
                     <IconUser className="w-5 h-5 mr-2" /> Profile
