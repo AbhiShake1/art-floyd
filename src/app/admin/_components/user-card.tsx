@@ -50,7 +50,7 @@ export async function UserCard() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <PromoteButton id={id} />
+                      {role !== "admin" && <PromoteButton id={id} />}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
