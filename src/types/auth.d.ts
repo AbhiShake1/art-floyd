@@ -1,7 +1,7 @@
 export { }
 
 declare global {
-  type UserRole = "buyer" | "artist"
+  type UserRole = "buyer" | "artist" | "admin"
 
   interface UserPublicMetadata {
     role?: UserRole

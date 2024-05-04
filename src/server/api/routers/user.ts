@@ -1,7 +1,21 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export const userRouter = createTRPCRouter({
+  all: protectedProcedure
+    .query(({ ctx }) => {
+      return ctx.db.nextauth_users.getAll()
+    }),
+  promoteToAdmin: protectedProcedure
+    .input(z.string())
+    .mutation(({ input }) => {
+      return clerkClient.users.updateUserMetadata(input, {
+        publicMetadata: {
+          role: "admin",
+        },
+      })
+    }),
   updateBio: protectedProcedure
     .input(z.string().min(5))
     .mutation(({ ctx, input: bio }) => {
