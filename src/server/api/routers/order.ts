@@ -4,6 +4,11 @@ import { z } from "zod";
 import { type Artwork } from "~/xata";
 
 export const orderRouter = createTRPCRouter({
+  markComplete: protectedProcedure
+    .input(z.string())
+    .mutation(({ ctx, input }) => {
+      return ctx.db.order.update(input, { status: "completed" })
+    }),
   my: protectedProcedure
     .query(async ({ ctx }) => {
       const orders = await ctx.db.orderArtwork
