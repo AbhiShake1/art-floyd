@@ -110,7 +110,7 @@ export const FloatingNav = ({
         </SignedOut>
         <SignedIn>
           {
-            user?.publicMetadata.role === "artist" &&
+            user?.publicMetadata.role !== "buyer" &&
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <IconSettings />
@@ -193,7 +193,7 @@ function CartSheet() {
               <div className="flex flex-1 flex-col gap-1 self-start text-sm">
                 <span className="line-clamp-1">{artwork?.name}</span>
                 <span className="line-clamp-1 text-muted-foreground">
-                  ${artwork?.price ?? 0} x {items.length} ={" "}
+								${artwork?.price ?? 0} x {items.length} ={" "}
                   {(artwork?.price ?? 0) * items.length}
                 </span>
                 <span className="line-clamp-1 text-xs capitalize text-muted-foreground">
