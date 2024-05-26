@@ -8,9 +8,9 @@ import {
 } from "framer-motion";
 import Link from "next/link";
 import { cn } from "~/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatedTooltip } from "./animated-tooltip";
-import { IconForms, IconLogin, IconSettings, IconShoppingCart } from "@tabler/icons-react";
+import { IconForms, IconLoader, IconLogin, IconSettings, IconShoppingCart } from "@tabler/icons-react";
 import { Button } from "./button";
 import { Sheet, SheetContent, SheetFooter, SheetTrigger } from "./sheet";
 import { Badge } from "./badge";
@@ -21,6 +21,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { IconUser, IconDashboard, IconPaint, IconBrandDeliveroo } from "@tabler/icons-react";
 import { KhaltiPaymentDialog } from "../khalti-payment-dialog";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import { api } from "~/trpc/react";
 
 const extra = {
   name: "Login",
@@ -157,7 +158,17 @@ export const FloatingNav = ({
 function CartSheet() {
   const cart = useCart()
 
+  const router = useRouter()
+  const utils = api.useUtils()
+
   const items = useMemo(() => groupBy(cart.items, "artwork.id"), [cart.items]);
+
+  const clearCartMutation = api.cart.clear.useMutation({
+    async onSuccess() {
+      await utils.cart.invalidate()
+      router.refresh()
+    },
+  })
 
   return <Sheet>
     <SheetTrigger>
@@ -194,6 +205,7 @@ function CartSheet() {
         }
       </div>
       <SheetFooter>
+        <Button variant="destructive" disabled={clearCartMutation.isLoading} onClick={() => clearCartMutation.mutate()}>{clearCartMutation.isLoading && <IconLoader className="animate-spin siz-4" />}Clear Cart</Button>
         <KhaltiPaymentDialog total={cart.total} />
       </SheetFooter>
     </SheetContent>
